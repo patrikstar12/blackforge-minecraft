@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>باشگاه پرمیوم | BlockForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060606; --bg2: #0d0d0d; --bg3: #141414;
+            --gold: #c8963e; --text: #e8e8e8; --text2: #a0a0a0; --text3: #666;
+            --border: #1f1f1f; --radius: 14px; --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --green: #2ecc71; --blue: #3498db; --orange: #e67e22;
+            --premium-gold: #f0c040; --token-color: #00d4ff; --xp-color: #a855f7;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        html { scroll-behavior:smooth; font-size:15px; }
+        body {
+            font-family:'Vazirmatn',sans-serif; background:var(--bg); color:var(--text);
+            line-height:1.7; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+            padding-bottom:calc(80px + var(--safe-bottom));
+        }
+
+        .header {
+            background:rgba(6,6,6,0.95); backdrop-filter:blur(25px);
+            border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100;
+            padding:10px 16px; display:flex; align-items:center; justify-content:space-between;
+        }
+        .back-btn {
+            width:36px; height:36px; border-radius:50%; background:var(--bg3);
+            border:1px solid var(--border); color:#aaa; display:flex;
+            align-items:center; justify-content:center; cursor:pointer; font-size:0.9rem;
+            transition:0.2s; text-decoration:none;
+        }
+        .back-btn:hover { background:var(--gold); color:#000; border-color:var(--gold); }
+        .logo { display:flex; align-items:center; gap:10px; }
+        .logo-icon {
+            width:38px; height:38px; background:linear-gradient(135deg, #c8963e, #7a5a2e);
+            border-radius:10px; display:flex; align-items:center; justify-content:center;
+            font-size:1.1rem; color:#fff; font-weight:900;
+            box-shadow:0 4px 15px rgba(200,150,62,0.3);
+        }
+        .logo-text { font-weight:900; font-size:1.2rem; color:#fff; } .logo-text span { color:var(--gold); }
+
+        .container { padding:0 16px 20px; max-width:600px; margin:0 auto; }
+
+        .hero {
+            text-align:center; padding:30px 20px; margin:16px 0;
+            background:linear-gradient(160deg, rgba(240,192,64,0.08), rgba(200,150,62,0.03));
+            border:1px solid rgba(240,192,64,0.2); border-radius:24px;
+        }
+        .crown {
+            font-size:4rem; color:var(--premium-gold); margin-bottom:12px;
+            animation:float 2s ease-in-out infinite;
+            filter:drop-shadow(0 0 20px rgba(240,192,64,0.5));
+        }
+        @keyframes float { 0%,100%{transform:translateY(0) rotate(-5deg);} 50%{transform:translateY(-15px) rotate(5deg);} }
+        .hero h1 { font-size:1.4rem; font-weight:900; color:var(--premium-gold); margin-bottom:6px; }
+        .hero p { font-size:0.78rem; color:#888; }
+
+        .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
+        .info-card {
+            background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius);
+            padding:18px 14px; text-align:center;
+        }
+        .info-card.prem { border-color:rgba(240,192,64,0.3); background:rgba(240,192,64,0.03); }
+        .info-card i { font-size:1.8rem; color:var(--gold); margin-bottom:8px; display:block; }
+        .info-card .val { font-size:1.4rem; font-weight:800; color:#fff; }
+        .info-card.prem .val { color:var(--premium-gold); }
+        .info-card .lbl { font-size:0.66rem; color:#888; margin-top:3px; }
+
+        .section {
+            background:var(--bg2); border:1px solid var(--border);
+            border-radius:var(--radius); padding:16px; margin:16px 0;
+        }
+        .section-title {
+            font-size:0.75rem; font-weight:800; color:#fff;
+            margin-bottom:12px; display:flex; align-items:center; gap:6px;
+        }
+        .section-title i { color:var(--gold); }
+
+        .bar-wrap { width:100%; height:8px; background:#1a1a1a; border-radius:8px; overflow:hidden; }
+        .bar-fill { height:100%; border-radius:8px; transition:width 0.5s; }
+        .bar-fill.xp { background:linear-gradient(90deg, #7c3aed, #a855f7); }
+        .bar-fill.premium { background:linear-gradient(90deg, #c8963e, #f0c040); }
+        .bar-info { display:flex; justify-content:space-between; font-size:0.6rem; color:#888; margin-top:6px; }
+
+        .missions-list { display:flex; flex-direction:column; gap:10px; }
+        .mission {
+            background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius);
+            padding:14px 16px; display:flex; align-items:center; gap:12px;
+        }
+        .mission.done { border-color:rgba(46,204,113,0.4); background:rgba(46,204,113,0.04); }
+        .m-icon {
+            width:42px; height:42px; border-radius:12px; display:flex;
+            align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;
+            background:var(--bg3); color:var(--gold);
+        }
+        .mission.done .m-icon { background:rgba(46,204,113,0.12); color:var(--green); }
+        .m-info { flex:1; min-width:0; }
+        .m-info h4 { font-size:0.78rem; font-weight:700; color:#fff; }
+        .m-info .prog { font-size:0.64rem; color:#888; margin-top:3px; }
+        .m-info .prog a { color:var(--gold); text-decoration:none; }
+        .m-check {
+            width:30px; height:30px; border-radius:50%; background:var(--bg3);
+            border:2px solid var(--border); display:flex; align-items:center;
+            justify-content:center; font-size:0.8rem; color:#444; flex-shrink:0;
+        }
+        .mission.done .m-check { background:var(--green); border-color:var(--green); color:#fff; }
+
+        .btn {
+            width:100%; padding:14px; border-radius:14px; font-weight:700;
+            cursor:pointer; font-size:0.8rem; font-family:inherit; transition:0.3s; border:none;
+            display:flex; align-items:center; justify-content:center; gap:8px;
+        }
+        .btn-claim {
+            background:linear-gradient(135deg, #f0c040, #c8963e); color:#000;
+            box-shadow:0 6px 25px rgba(200,150,62,0.4); margin-top:16px;
+        }
+        .btn-claim:hover { transform:translateY(-2px); box-shadow:0 10px 35px rgba(200,150,62,0.6); }
+        .btn-claim:disabled { background:#1a1a1a; color:#555; cursor:not-allowed; box-shadow:none; }
+        .btn-purple { background:linear-gradient(135deg, #8b5cf6, #6d28d9); color:#fff; margin-top:8px; }
+        .btn-violet { background:linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; margin-top:8px; }
+        .btn:hover { transform:translateY(-2px); }
+        .btn-link { text-decoration:none; display:flex; }
+
+        .info-row { text-align:center; font-size:0.68rem; color:#888; margin-top:12px; }
+        .info-row span { color:var(--blue); font-weight:700; }
+
+        .bottom-nav {
+            position:fixed; bottom:0; left:0; right:0;
+            background:rgba(6,6,6,0.97); backdrop-filter:blur(20px);
+            border-top:1px solid var(--border); display:flex; justify-content:space-around;
+            padding:8px 0 calc(8px + var(--safe-bottom)); z-index:50;
+        }
+        .bottom-nav a {
+            display:flex; flex-direction:column; align-items:center; gap:2px;
+            color:#555; text-decoration:none; font-size:0.62rem;
+            padding:4px 10px; transition:0.2s;
+        }
+        .bottom-nav a i { font-size:1.3rem; }
+        .bottom-nav a.active { color:var(--gold); }
+
+        .congrats-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.95); backdrop-filter:blur(20px);
+            z-index:900; display:flex; align-items:center; justify-content:center;
+            opacity:0; visibility:hidden; transition:0.5s;
+        }
+        .congrats-overlay.active { opacity:1; visibility:visible; }
+        .congrats-box {
+            background:linear-gradient(160deg, #1a1200, #0d0a00);
+            border:2px solid var(--premium-gold); border-radius:32px;
+            padding:40px 28px; text-align:center; max-width:370px; width:90%;
+            animation:bounce 0.7s cubic-bezier(0.25,0.8,0.25,1.4);
+        }
+        @keyframes bounce {
+            0%{opacity:0;transform:scale(0.6) translateY(50px);}
+            60%{opacity:1;transform:scale(1.04) translateY(-5px);}
+            100%{transform:scale(1) translateY(0);}
+        }
+        .congrats-box .crown { font-size:4rem; color:var(--premium-gold); margin-bottom:12px; animation:float 1s ease-in-out infinite; }
+        .congrats-box h2 { font-size:1.4rem; font-weight:900; color:var(--premium-gold); margin-bottom:8px; }
+        .congrats-box p { font-size:0.85rem; color:#c8a860; margin-bottom:20px; line-height:2; }
+        .congrats-features { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; text-align:right; }
+        .congrats-feat {
+            display:flex; align-items:center; gap:12px;
+            background:rgba(240,192,64,0.06); border:1px solid rgba(240,192,64,0.2);
+            border-radius:14px; padding:12px 16px; font-size:0.78rem; color:#d0b870;
+        }
+        .congrats-feat i { color:var(--premium-gold); font-size:1.1rem; width:24px; text-align:center; }
+        .congrats-btn {
+            width:100%; background:linear-gradient(135deg, #f0c040, #c8963e); color:#000;
+            border:none; padding:14px; border-radius:16px; font-weight:800;
+            cursor:pointer; font-size:0.9rem; font-family:inherit; transition:0.3s;
+            box-shadow:0 6px 25px rgba(200,150,62,0.5);
+        }
+        .congrats-btn:hover { transform:translateY(-3px); }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-cubes"></i></div>
+            <div class="logo-text">Block<span>Forge</span></div>
+        </div>
+        <div style="width:36px;"></div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <div class="crown"><i class="fa-solid fa-crown"></i></div>
+            <h1>باشگاه پرمیوم</h1>
+            <p>ماموریت‌ها رو کامل کن و پرمیوم دائمی بگیر!</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <i class="fa-solid fa-coins"></i>
+                <div class="val" id="tokenInfo">0</div>
+                <div class="lbl">توکن</div>
+            </div>
+            <div class="info-card">
+                <i class="fa-solid fa-bookmark"></i>
+                <div class="val" id="saveInfo">5</div>
+                <div class="lbl">ذخیره</div>
+            </div>
+            <div class="info-card prem">
+                <i class="fa-solid fa-infinity"></i>
+                <div class="val">∞</div>
+                <div class="lbl">دانلود پرمیوم</div>
+            </div>
+            <div class="info-card prem">
+                <i class="fa-solid fa-infinity"></i>
+                <div class="val">∞</div>
+                <div class="lbl">ذخیره پرمیوم</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><i class="fa-solid fa-star"></i> سطح <span id="xpLevel">1</span></div>
+            <div class="bar-wrap"><div class="bar-fill xp" id="xpBar" style="width:0%;"></div></div>
+            <div class="bar-info">
+                <span><span id="xpCurrent">0</span> XP</span>
+                <span id="xpPercent">0%</span>
+                <span><span id="xpNeeded">200</span> XP</span>
+            </div>
+        </div>
+
+        <div class="info-row"><i class="fa-solid fa-clock"></i> کول‌داون دانلود: <span id="cooldownInfo">۱:۰۰</span></div>
+        <div class="info-row">شارژ توکن بعدی: <span id="rechargeTimer">--</span></div>
+
+        <!-- فقط مسابقه و صندوق -->
+        <a href="quiz.html" class="btn btn-purple btn-link">
+            <i class="fa-solid fa-question-circle"></i> مسابقه ماینکرفت
+        </a>
+        <a href="index.html" class="btn btn-violet btn-link" onclick="localStorage.setItem('bf_pending_action','lottery')">
+            <i class="fa-solid fa-gift"></i> صندوق قرعه‌کشی
+        </a>
+
+        <div class="section" style="margin-top:20px;">
+            <div class="section-title"><i class="fa-solid fa-crown"></i> پیشرفت پرمیوم</div>
+            <div class="bar-info" style="margin-bottom:8px;">
+                <span id="premiumLabel">0/4 ماموریت</span>
+                <span id="premiumPercent">0%</span>
+            </div>
+            <div class="bar-wrap"><div class="bar-fill premium" id="premiumBar" style="width:0%;"></div></div>
+        </div>
+
+        <h3 style="font-size:0.9rem;font-weight:800;margin:20px 0 12px;display:flex;align-items:center;gap:8px;">
+            <i class="fa-solid fa-list-check"></i> ماموریت‌ها
+        </h3>
+        <div class="missions-list" id="missionsList"></div>
+
+        <button class="btn btn-claim" id="claimBtn" disabled onclick="claimPremium()">
+            <i class="fa-solid fa-crown"></i> دریافت پرمیوم دائمی
+        </button>
+    </div>
+
+    <div class="congrats-overlay" id="congratsOverlay">
+        <div class="congrats-box">
+            <div class="crown"><i class="fa-solid fa-crown"></i></div>
+            <h2>تبریک!</h2>
+            <p><i class="fa-solid fa-star"></i> به باشگاه پرمیوم خوش اومدی!<br>حالا بدون محدودیت دانلود کن!</p>
+            <div class="congrats-features">
+                <div class="congrats-feat"><i class="fa-solid fa-infinity"></i> دانلود نامحدود</div>
+                <div class="congrats-feat"><i class="fa-solid fa-infinity"></i> ذخیره نامحدود</div>
+                <div class="congrats-feat"><i class="fa-solid fa-clock"></i> بدون زمان انتظار</div>
+            </div>
+            <button class="congrats-btn" onclick="document.getElementById('congratsOverlay').classList.remove('active');window.location.href='index.html';">
+                <i class="fa-solid fa-rocket"></i> بریم که شروع کنیم!
+            </button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fa-solid fa-house"></i> خانه</a>
+        <a href="premium.html" class="active"><i class="fa-solid fa-crown" style="color:var(--premium-gold);"></i> پرمیوم</a>
+        <a href="#" onclick="localStorage.setItem('bf_pending_action','saved');window.location.href='index.html';"><i class="fa-solid fa-bookmark"></i> ذخیره‌شده</a>
+    </nav>
+
+    <script>
+        const LEVELS = [
+            { level:1, xp:0, cd:60 },
+            { level:2, xp:200, cd:55 },
+            { level:3, xp:600, cd:50 },
+            { level:4, xp:800, cd:45 },
+            { level:5, xp:1000, cd:40 },
+            { level:6, xp:1500, cd:30 }
+        ];
+
+        function getXP() { return JSON.parse(localStorage.getItem('bf_xp')||'{"xp":0,"level":1}'); }
+        function getLevel() { const d=getXP(); for(let i=LEVELS.length-1;i>=0;i--){ if(d.xp>=LEVELS[i].xp) return LEVELS[i].level; } return 1; }
+        function getCooldownMS() { return (LEVELS.find(l=>l.level===getLevel())||LEVELS[0]).cd*1000; }
+
+        function getTokens() {
+            const d=JSON.parse(localStorage.getItem('bf_tokens')||'{"tokens":2000,"last":'+Date.now()+'}');
+            const e=Date.now()-d.last;
+            if(e>=21600000){ d.tokens=Math.min(50000,d.tokens+Math.floor(e/21600000)*2000); d.last=Date.now()-(e%21600000); localStorage.setItem('bf_tokens',JSON.stringify(d)); }
+            return d.tokens;
+        }
+        function getRechargeRemaining() {
+            const d=JSON.parse(localStorage.getItem('bf_tokens')||'{"tokens":2000,"last":'+Date.now()+'}');
+            return Math.max(0,21600000-(Date.now()-d.last));
+        }
+
+        function getPremium() { return JSON.parse(localStorage.getItem('bf_premium')||'{"missions":[],"active":false}'); }
+        function savePremium(d) { localStorage.setItem('bf_premium',JSON.stringify(d)); }
+        function isPremium() { return getPremium().active===true; }
+
+        function getMissions() {
+            const d=getPremium();
+            const saved=new Set(JSON.parse(localStorage.getItem('bf_saved')||'[]'));
+            const totalDL=parseInt(localStorage.getItem('bf_totaldl')||'0');
+            const sessionStart=parseInt(localStorage.getItem('bf_session')||Date.now());
+            const minutes=Math.floor((Date.now()-sessionStart)/60000);
+            const rubika=localStorage.getItem('bf_rubika')==='true';
+
+            return [
+                { id:'time', title:'۱۰ دقیقه در برنامه بمونید', icon:'fa-clock', target:10, current:Math.min(10,minutes), done:d.missions.includes('time') },
+                { id:'rubika', title:'به کانال روبیکا سر بزنید', icon:'fa-comment', target:1, current:rubika?1:0, done:d.missions.includes('rubika'), action:'rubika' },
+                { id:'dl5', title:'۵ آیتم دانلود کنید', icon:'fa-download', target:5, current:totalDL, done:d.missions.includes('dl5') },
+                { id:'save3', title:'۳ آیتم ذخیره کنید', icon:'fa-bookmark', target:3, current:saved.size, done:d.missions.includes('save3') },
+            ];
+        }
+
+        function checkMission(id) {
+            const d=getPremium();
+            if(d.missions.includes(id)) return;
+            const m=getMissions().find(m=>m.id===id);
+            if(m&&m.current>=m.target){ d.missions.push(id); savePremium(d); updateUI(); }
+        }
+
+        function updateUI() {
+            const ms=getMissions(), d=getPremium(), done=ms.filter(m=>m.done).length;
+            const pct=Math.round((done/ms.length)*100);
+            
+            document.getElementById('premiumLabel').textContent=done+'/'+ms.length+' ماموریت';
+            document.getElementById('premiumPercent').textContent=pct+'%';
+            document.getElementById('premiumBar').style.width=pct+'%';
+
+            const cb=document.getElementById('claimBtn');
+            if(done===ms.length&&!isPremium()){ cb.disabled=false; cb.innerHTML='<i class="fa-solid fa-crown"></i> دریافت پرمیوم دائمی'; }
+            else if(isPremium()){ cb.disabled=true; cb.innerHTML='<i class="fa-solid fa-check-circle"></i> پرمیوم فعال است'; }
+            else{ cb.disabled=true; cb.textContent=done+'/'+ms.length+' ماموریت'; }
+
+            document.getElementById('missionsList').innerHTML=ms.map(m=>`
+                <div class="mission ${m.done?'done':''}">
+                    <div class="m-icon"><i class="fa-solid ${m.icon}"></i></div>
+                    <div class="m-info">
+                        <h4>${m.title}</h4>
+                        <div class="prog">${m.current}/${m.target} ${m.action==='rubika'&&!m.done?`<a href="https://rubika.ir/zolbiao" target="_blank" onclick="visitRubika()">کلیک کن <i class="fa-solid fa-external-link-alt"></i></a>`:''}</div>
+                    </div>
+                    <div class="m-check">${m.done?'<i class="fa-solid fa-check"></i>':''}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('saveInfo').textContent=isPremium()?'∞':Math.min(new Set(JSON.parse(localStorage.getItem('bf_saved')||'[]')).size,5);
+
+            const xp=getXP();
+            document.getElementById('xpLevel').textContent=xp.level;
+            const nextLvl=LEVELS.find(l=>l.xp>xp.xp)||LEVELS[LEVELS.length-1];
+            const currXP=xp.xp-(LEVELS.find(l=>l.level===xp.level)?.xp||0);
+            const needXP=nextLvl.xp-(LEVELS.find(l=>l.level===xp.level)?.xp||0);
+            const xpPct=Math.min(100,Math.round((currXP/(needXP||1))*100));
+            document.getElementById('xpPercent').textContent=xpPct+'%';
+            document.getElementById('xpBar').style.width=xpPct+'%';
+            document.getElementById('xpCurrent').textContent=currXP.toLocaleString('fa');
+            document.getElementById('xpNeeded').textContent=needXP.toLocaleString('fa');
+
+            const s=Math.ceil(getCooldownMS()/1000);
+            document.getElementById('cooldownInfo').textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
+            document.getElementById('tokenInfo').textContent=getTokens().toLocaleString('fa');
+
+            const rem=getRechargeRemaining();
+            document.getElementById('rechargeTimer').textContent=Math.floor(rem/60000)+' دقیقه '+Math.floor((rem%60000)/1000)+' ثانیه';
+        }
+
+        function visitRubika(){ localStorage.setItem('bf_rubika','true'); checkMission('rubika'); updateUI(); }
+        function claimPremium(){
+            const d=getPremium();
+            if(getMissions().every(m=>m.done)&&!isPremium()){
+                d.active=true; savePremium(d); updateUI();
+                document.getElementById('congratsOverlay').classList.add('active');
+            }
+        }
+
+        setInterval(()=>{
+            const ss=parseInt(localStorage.getItem('bf_session')||Date.now());
+            if(Math.floor((Date.now()-ss)/60000)>=10) checkMission('time');
+        },10000);
+
+        if(!localStorage.getItem('bf_session')) localStorage.setItem('bf_session',Date.now().toString());
+        updateUI();
+        setInterval(updateUI,10000);
+    </script>
+</body>
+</html>

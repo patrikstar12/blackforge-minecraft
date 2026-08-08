@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>راهنمای انچنت‌ها | BlockForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060608; --bg2: rgba(15,15,20,0.6); --glass: rgba(20,20,28,0.5);
+            --glass-border: rgba(255,255,255,0.06); --gold: #d4a54a;
+            --text: #e8e8e8; --text2: #a8a8a8; --text3: #707070;
+            --border: rgba(255,255,255,0.06); --radius: 14px; --radius-lg: 20px;
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --green: #2ecc71; --blue: #3498db; --purple: #a855f7; --orange: #e67e22;
+            --red: #e74c3c; --cyan: #00bcd4; --pink: #e91e63; --yellow: #f1c40f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; font-size: 15px; }
+        body {
+            font-family: 'Vazirmatn', sans-serif; background: var(--bg);
+            background-image: 
+                radial-gradient(ellipse at 30% 10%, rgba(168,85,247,0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(168,85,247,0.02) 0%, transparent 60%);
+            color: var(--text); line-height: 1.7; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; padding-bottom: calc(20px + var(--safe-bottom));
+        }
+
+        .header {
+            background: rgba(8,8,12,0.85); backdrop-filter: blur(30px) saturate(160%);
+            -webkit-backdrop-filter: blur(30px) saturate(160%); border-bottom: 1px solid var(--glass-border);
+            position: sticky; top: 0; z-index: 100; padding: 8px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .back-btn {
+            width: 34px; height: 34px; border-radius: 50%; background: var(--glass);
+            border: 1px solid var(--glass-border); color: #bbb; cursor: pointer;
+            font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s; text-decoration: none;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .header-title {
+            font-weight: 800; font-size: 0.95rem; color: #fff;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .header-title i { color: var(--purple); }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 12px 16px; }
+
+        /* ========== Search ========== */
+        .search-wrap {
+            position: relative; margin-bottom: 12px;
+        }
+        .search-input {
+            width: 100%; background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 14px; padding: 12px 42px 12px 16px;
+            color: #fff; font-size: 0.7rem; font-family: inherit;
+            backdrop-filter: blur(10px); transition: all 0.3s;
+        }
+        .search-input:focus { outline: none; border-color: rgba(168,85,247,0.5); box-shadow: 0 0 0 3px rgba(168,85,247,0.06); }
+        .search-input::placeholder { color: #555; }
+        .search-icon {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            color: #666; font-size: 0.85rem; pointer-events: none;
+        }
+
+        /* ========== Category Chips ========== */
+        .cat-scroll {
+            display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+            padding-bottom: 4px; margin-bottom: 14px;
+        }
+        .cat-scroll::-webkit-scrollbar { display: none; }
+        .cat-chip {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 8px 14px; font-size: 0.62rem;
+            color: #aaa; white-space: nowrap; cursor: pointer;
+            transition: all 0.25s; flex-shrink: 0; font-family: inherit;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .cat-chip:hover { border-color: rgba(168,85,247,0.3); color: #fff; }
+        .cat-chip.active { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.4); color: #fff; font-weight: 700; }
+        .cat-chip .chip-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .chip-dot.all { background: #888; }
+        .chip-dot.sword { background: #e74c3c; }
+        .chip-dot.armor { background: #3498db; }
+        .chip-dot.tool { background: #f1c40f; }
+        .chip-dot.bow { background: #e67e22; }
+        .chip-dot.trident { background: #00bcd4; }
+        .chip-dot.special { background: #a855f7; }
+
+        /* ========== Enchantment Cards ========== */
+        .ench-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .ench-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius); padding: 14px 12px;
+            backdrop-filter: blur(10px); transition: all 0.3s;
+            cursor: pointer; position: relative; overflow: hidden;
+            opacity: 0; animation: fadeUp 0.4s ease forwards;
+        }
+        .ench-card:nth-child(1) { animation-delay: 0.02s; }
+        .ench-card:nth-child(2) { animation-delay: 0.04s; }
+        .ench-card:nth-child(3) { animation-delay: 0.06s; }
+        .ench-card:nth-child(4) { animation-delay: 0.08s; }
+        .ench-card:nth-child(5) { animation-delay: 0.10s; }
+        .ench-card:nth-child(6) { animation-delay: 0.12s; }
+        .ench-card:nth-child(7) { animation-delay: 0.14s; }
+        .ench-card:nth-child(8) { animation-delay: 0.16s; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .ench-card:hover { border-color: rgba(168,85,247,0.4); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+        .ench-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; border-radius: 3px 3px 0 0;
+        }
+        .ench-card.category-sword::before { background: #e74c3c; }
+        .ench-card.category-armor::before { background: #3498db; }
+        .ench-card.category-tool::before { background: #f1c40f; }
+        .ench-card.category-bow::before { background: #e67e22; }
+        .ench-card.category-trident::before { background: #00bcd4; }
+        .ench-card.category-special::before { background: #a855f7; }
+        
+        .ench-icon {
+            font-size: 1.8rem; margin-bottom: 6px; display: block;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.1));
+        }
+        .ench-name-fa { font-size: 0.72rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+        .ench-name-en { font-size: 0.52rem; color: #666; margin-bottom: 6px; font-family: monospace; }
+        .ench-info-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.52rem; color: #888;
+        }
+        .ench-max {
+            background: rgba(241,196,15,0.1); color: #f1c40f;
+            padding: 2px 8px; border-radius: 6px; font-weight: 700;
+            border: 1px solid rgba(241,196,15,0.2);
+        }
+        .ench-incompat {
+            position: absolute; top: 8px; left: 8px;
+            background: rgba(231,76,60,0.15); color: #e74c3c;
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.5rem; border: 1px solid rgba(231,76,60,0.3);
+        }
+
+        /* ========== Modal ========== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.94);
+            backdrop-filter: blur(12px); z-index: 400; display: flex;
+            align-items: flex-end; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal {
+            background: #151515; border-radius: 20px 20px 0 0; width: 100%;
+            max-height: 80vh; overflow-y: auto; padding: 18px 14px 28px;
+            transform: translateY(100%); transition: 0.4s cubic-bezier(0.25,0.8,0.25,1);
+            border: 1px solid rgba(255,255,255,0.06); border-bottom: none;
+        }
+        .modal-overlay.active .modal { transform: translateY(0); }
+        .modal-handle { width: 34px; height: 4px; background: #444; border-radius: 3px; margin: 0 auto 14px; }
+        .modal-close {
+            position: absolute; top: 14px; right: 14px; width: 28px; height: 28px;
+            border-radius: 50%; background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1); color: #fff;
+            cursor: pointer; z-index: 1; font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-ench-header {
+            text-align: center; margin-bottom: 16px;
+        }
+        .modal-ench-icon { font-size: 3rem; margin-bottom: 8px; display: block; }
+        .modal-ench-name { font-size: 1.1rem; font-weight: 900; color: #fff; }
+        .modal-ench-en { font-size: 0.64rem; color: #666; font-family: monospace; margin-top: 2px; }
+        .modal-info-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            margin-bottom: 14px;
+        }
+        .modal-info-item {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 8px; text-align: center;
+        }
+        .modal-info-item i { font-size: 0.9rem; margin-bottom: 4px; display: block; }
+        .modal-info-label { font-size: 0.52rem; color: #777; margin-bottom: 2px; }
+        .modal-info-value { font-size: 0.66rem; font-weight: 700; color: #fff; }
+        .modal-desc-box {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px; margin-bottom: 12px;
+        }
+        .modal-desc-title {
+            font-size: 0.64rem; font-weight: 700; color: #aaa;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+        }
+        .modal-desc-title i { color: var(--purple); }
+        .modal-desc-text { color: #b0b0b0; font-size: 0.7rem; line-height: 2.2; }
+        .modal-incompat-list {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;
+        }
+        .modal-incompat-tag {
+            background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.2);
+            color: #e74c3c; padding: 4px 10px; border-radius: 8px;
+            font-size: 0.56rem;
+        }
+        .modal-applies-to {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;
+        }
+        .modal-applies-tag {
+            background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2);
+            color: #a855f7; padding: 4px 10px; border-radius: 8px;
+            font-size: 0.56rem;
+        }
+
+        .no-results {
+            text-align: center; padding: 40px 20px; color: #555;
+            grid-column: 1 / -1;
+        }
+        .no-results i { font-size: 3rem; color: #222; margin-bottom: 10px; display: block; }
+
+        @media (min-width: 600px) {
+            .ench-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+        <div class="header-title"><i class="fa-solid fa-wand-magic-sparkles"></i> راهنمای انچنت‌ها</div>
+        <div style="width:34px;"></div>
+    </header>
+
+    <div class="container">
+        <!-- Search -->
+        <div class="search-wrap">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 جستجوی انچنت فارسی یا انگلیسی..." oninput="filterEnchants()">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
+
+        <!-- Category Chips -->
+        <div class="cat-scroll" id="catScroll">
+            <button class="cat-chip active" data-cat="all" onclick="setCategory('all')">
+                <span class="chip-dot all"></span> همه
+            </button>
+            <button class="cat-chip" data-cat="sword" onclick="setCategory('sword')">
+                <span class="chip-dot sword"></span> شمشیر
+            </button>
+            <button class="cat-chip" data-cat="armor" onclick="setCategory('armor')">
+                <span class="chip-dot armor"></span> armor (زره)
+            </button>
+            <button class="cat-chip" data-cat="tool" onclick="setCategory('tool')">
+                <span class="chip-dot tool"></span> ابزار
+            </button>
+            <button class="cat-chip" data-cat="bow" onclick="setCategory('bow')">
+                <span class="chip-dot bow"></span> Bow (کمان)
+            </button>
+            <button class="cat-chip" data-cat="trident" onclick="setCategory('trident')">
+                <span class="chip-dot trident"></span> Trident (سه‌شاخ)
+            </button>
+            <button class="cat-chip" data-cat="special" onclick="setCategory('special')">
+                <span class="chip-dot special"></span> خاص
+            </button>
+        </div>
+
+        <!-- Enchantment Grid -->
+        <div class="ench-grid" id="enchGrid"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script>
+        // ==================== Data ====================
+        const enchantments = [
+            // شمشیر (Sword)
+            { id: 'sharpness', icon: '🗡️', nameFa: 'تیزی', nameEn: 'Sharpness', category: 'sword', max: 5, applies: ['شمشیر', 'تبر'], desc: 'افزایش آسیب حمله. هر سطح ۱.۲۵ آسیب اضافه می‌کند.', incompatible: [] },
+            { id: 'smite', icon: '💀', nameFa: 'ضربه مقدس', nameEn: 'Smite', category: 'sword', max: 5, applies: ['شمشیر', 'تبر'], desc: 'افزایش آسیب به موجودات undead (زامبی، اسکلت، ویزر). هر سطح ۲.۵ آسیب.', incompatible: ['sharpness', 'bane_of_arthropods'] },
+            { id: 'bane_of_arthropods', icon: '🕷️', nameFa: 'نابودی بندپایان', nameEn: 'Bane of Arthropods', category: 'sword', max: 5, applies: ['شمشیر', 'تبر'], desc: 'افزایش آسیب به عنکبوت، cave spider و silverfish.', incompatible: ['sharpness', 'smite'] },
+            { id: 'knockback', icon: '💨', nameFa: 'پرتاب', nameEn: 'Knockback', category: 'sword', max: 2, applies: ['شمشیر'], desc: 'دشمن رو به عقب پرتاب می‌کنه. هر سطح ۳ بلاک بیشتر.', incompatible: [] },
+            { id: 'fire_aspect', icon: '🔥', nameFa: 'جنبه آتش', nameEn: 'Fire Aspect', category: 'sword', max: 2, applies: ['شمشیر'], desc: 'هدف رو آتش می‌زنه. سطح ۱ = ۳ ثانیه، سطح ۲ = ۷ ثانیه.', incompatible: [] },
+            { id: 'looting', icon: '💎', nameFa: 'غارت', nameEn: 'Looting', category: 'sword', max: 3, applies: ['شمشیر'], desc: 'افزایش drop ماب‌ها. هر سطح ۱ آیتم بیشتر.', incompatible: [] },
+
+            // زره (Armor)
+            { id: 'protection', icon: '🛡️', nameFa: 'محافظت', nameEn: 'Protection', category: 'armor', max: 4, applies: ['کلاه', 'chestplate', 'شلوار', 'بوت'], desc: 'کاهش کلی همه نوع آسیب. هر سطح ۴٪ کاهش.', incompatible: ['fire_protection', 'blast_protection', 'projectile_protection'] },
+            { id: 'fire_protection', icon: '🧯', nameFa: 'محافظت آتش', nameEn: 'Fire Protection', category: 'armor', max: 4, applies: ['کلاه', 'chestplate', 'شلوار', 'بوت'], desc: 'کاهش آسیب آتش و lava. هر سطح ۸٪ کاهش.', incompatible: ['protection', 'blast_protection', 'projectile_protection'] },
+            { id: 'blast_protection', icon: '💣', nameFa: 'محافظت انفجار', nameEn: 'Blast Protection', category: 'armor', max: 4, applies: ['کلاه', 'chestplate', 'شلوار', 'بوت'], desc: 'کاهش آسیب انفجار (Creeper, TNT). هر سطح ۸٪.', incompatible: ['protection', 'fire_protection', 'projectile_protection'] },
+            { id: 'projectile_protection', icon: '🏹', nameFa: 'محافظت پرتابه', nameEn: 'Projectile Protection', category: 'armor', max: 4, applies: ['کلاه', 'chestplate', 'شلوار', 'بوت'], desc: 'کاهش آسیب تیر و fireball. هر سطح ۸٪.', incompatible: ['protection', 'fire_protection', 'blast_protection'] },
+            { id: 'thorns', icon: '🌵', nameFa: 'خار', nameEn: 'Thorns', category: 'armor', max: 3, applies: ['کلاه', 'chestplate', 'شلوار', 'بوت'], desc: 'به مهاجم آسیب می‌زنه. شانس فعال‌سازی: سطح ۱=۱۵٪، سطح ۳=۴۵٪.', incompatible: [] },
+            { id: 'feather_falling', icon: '🪶', nameFa: 'سبکبالی', nameEn: 'Feather Falling', category: 'armor', max: 4, applies: ['بوت'], desc: 'کاهش آسیب سقوط. هر سطح ۱۲٪ کاهش. سطح ۴ = ۴۸٪.', incompatible: [] },
+            { id: 'depth_strider', icon: '🌊', nameFa: 'راه‌روی عمیق', nameEn: 'Depth Strider', category: 'armor', max: 3, applies: ['بوت'], desc: 'افزایش سرعت حرکت زیر آب. سطح ۳ = سرعت عادی روی زمین.', incompatible: ['frost_walker'] },
+            { id: 'frost_walker', icon: '❄️', nameFa: 'یخ‌ساز', nameEn: 'Frost Walker', category: 'armor', max: 2, applies: ['بوت'], desc: 'آب زیر پات یخ می‌زنه! هر سطح شعاع بیشتری رو یخ می‌کنه.', incompatible: ['depth_strider'] },
+            { id: 'respiration', icon: '🫧', nameFa: 'تنفس', nameEn: 'Respiration', category: 'armor', max: 3, applies: ['کلاه'], desc: 'افزایش زمان تنفس زیر آب. هر سطح ۱۵ ثانیه بیشتر.', incompatible: [] },
+            { id: 'aqua_affinity', icon: '💧', nameFa: 'وابستگی آبی', nameEn: 'Aqua Affinity', category: 'armor', max: 1, applies: ['کلاه'], desc: 'سرعت کندن بلاک زیر آب مثل روی زمینه. فقط ۱ سطح.', incompatible: [] },
+            { id: 'swift_sneak', icon: '👣', nameFa: 'حرکت مخفیانه', nameEn: 'Swift Sneak', category: 'armor', max: 3, applies: ['شلوار'], desc: 'افزایش سرعت sneaking. مخصوص Bedrock 1.19+.', incompatible: [] },
+
+            // ابزار (Tools)
+            { id: 'efficiency', icon: '⛏️', nameFa: 'کارایی', nameEn: 'Efficiency', category: 'tool', max: 5, applies: ['کلنگ', 'تبر', 'بیل', 'hoe', 'shears'], desc: 'افزایش سرعت کندن بلاک. سطح ۵ = ۴۰ برابر سریع‌تر!', incompatible: [] },
+            { id: 'fortune', icon: '✨', nameFa: 'ثروت', nameEn: 'Fortune', category: 'tool', max: 3, applies: ['کلنگ', 'تبر', 'بیل', 'hoe'], desc: 'افزایش drop بلاک‌ها (الماس، زغال، رداستون...).', incompatible: ['silk_touch'] },
+            { id: 'silk_touch', icon: '🕸️', nameFa: 'لمس ابریشمی', nameEn: 'Silk Touch', category: 'tool', max: 1, applies: ['کلنگ', 'تبر', 'بیل', 'hoe'], desc: 'بلاک رو به صورت خودش برمی‌داره. (مثلاً stone به جای cobblestone)', incompatible: ['fortune'] },
+
+            // کمان (Bow)
+            { id: 'power', icon: '💪', nameFa: 'قدرت', nameEn: 'Power', category: 'bow', max: 5, applies: ['کمان'], desc: 'افزایش آسیب تیر. هر سطح ۲۵٪ بیشتر.', incompatible: [] },
+            { id: 'punch', icon: '👊', nameFa: 'مشت', nameEn: 'Punch', category: 'bow', max: 2, applies: ['کمان'], desc: 'هدف رو با تیر به عقب پرتاب می‌کنه.', incompatible: [] },
+            { id: 'flame', icon: '🔥', nameFa: 'شعله', nameEn: 'Flame', category: 'bow', max: 1, applies: ['کمان'], desc: 'تیر آتشین - هدف رو آتش می‌زنه.', incompatible: [] },
+            { id: 'infinity', icon: '♾️', nameFa: 'بی‌نهایت', nameEn: 'Infinity', category: 'bow', max: 1, applies: ['کمان'], desc: 'تیر نامحدود! فقط به ۱ تیر توی inventory نیاز داری.', incompatible: ['mending'] },
+
+            // سه‌شاخ (Trident)
+            { id: 'loyalty', icon: '🔄', nameFa: 'وفاداری', nameEn: 'Loyalty', category: 'trident', max: 3, applies: ['سه‌شاخ'], desc: 'سه‌شاخ بعد از پرتاب برمی‌گرده. سطح ۳ = سریع‌ترین برگشت.', incompatible: ['riptide'] },
+            { id: 'impaling', icon: '🔱', nameFa: 'فرورفتن', nameEn: 'Impaling', category: 'trident', max: 5, applies: ['سه‌شاخ'], desc: 'افزایش آسیب به موجودات آبی و موجودات توی آب.', incompatible: [] },
+            { id: 'riptide', icon: '🌊', nameFa: 'جریان', nameEn: 'Riptide', category: 'trident', max: 3, applies: ['سه‌شاخ'], desc: 'وقتی توی آب یا بارون هستی، با پرتاب سه‌شاخ پرتاپ میشی جلو!', incompatible: ['loyalty', 'channeling'] },
+            { id: 'channeling', icon: '⚡', nameFa: 'هدایت', nameEn: 'Channeling', category: 'trident', max: 1, applies: ['سه‌شاخ'], desc: 'موقع طوفان، صاعقه رو به هدف اصابت می‌کنه.', incompatible: ['riptide'] },
+
+            // خاص (Special/Universal)
+            { id: 'unbreaking', icon: '💪', nameFa: 'تخریب‌ناپذیری', nameEn: 'Unbreaking', category: 'special', max: 3, applies: ['همه آیتم‌ها'], desc: 'افزایش دوام آیتم. کاهش شانس damage خوردن.', incompatible: [] },
+            { id: 'mending', icon: '💫', nameFa: 'ترمیم', nameEn: 'Mending', category: 'special', max: 1, applies: ['همه آیتم‌ها'], desc: 'با جمع‌آوری XP، آیتم ترمیم میشه. عالیه برای ابزارهای قیمتی!', incompatible: ['infinity'] },
+        ];
+
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // ==================== Render ====================
+        function renderEnchants() {
+            const grid = document.getElementById('enchGrid');
+            
+            let filtered = enchantments;
+            
+            // فیلتر دسته‌بندی
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(e => e.category === currentCategory);
+            }
+            
+            // فیلتر جستجو
+            if (searchQuery.trim()) {
+                const q = searchQuery.trim().toLowerCase();
+                filtered = filtered.filter(e => 
+                    e.nameFa.includes(q) || 
+                    e.nameEn.toLowerCase().includes(q) ||
+                    e.desc.includes(q) ||
+                    e.applies.some(a => a.includes(q))
+                );
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                <div class="no-results">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <p>هیچ انچنتی پیدا نشد!</p>
+                </div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(e => `
+                <div class="ench-card category-${e.category}" onclick="openEnchantModal('${e.id}')">
+                    ${e.incompatible.length > 0 ? '<span class="ench-incompat" title="ناسازگاری دارد">!</span>' : ''}
+                    <span class="ench-icon">${e.icon}</span>
+                    <div class="ench-name-fa">${e.nameFa}</div>
+                    <div class="ench-name-en">${e.nameEn}</div>
+                    <div class="ench-info-row">
+                        <span>${e.applies[0]}${e.applies.length > 1 ? ' +' + (e.applies.length-1) : ''}</span>
+                        <span class="ench-max">حداکثر ${e.max}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            
+            // Update chips
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.cat-chip[data-cat="${cat}"]`)?.classList.add('active');
+            
+            renderEnchants();
+        }
+
+        function filterEnchants() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderEnchants();
+        }
+
+        // ==================== Modal ====================
+        function openEnchantModal(id) {
+            const e = enchantments.find(ench => ench.id === id);
+            if (!e) return;
+
+            const incompatHTML = e.incompatible.length > 0 ? 
+                e.incompatible.map(incId => {
+                    const inc = enchantments.find(en => en.id === incId);
+                    return inc ? `<span class="modal-incompat-tag">❌ ${inc.nameFa} (${inc.nameEn})</span>` : '';
+                }).join('') : 
+                '<span style="color:#555;font-size:0.56rem;">ندارد</span>';
+
+            const appliesHTML = e.applies.map(a => 
+                `<span class="modal-applies-tag">${a}</span>`
+            ).join('');
+
+            const categoryColors = {
+                sword: '#e74c3c', armor: '#3498db', tool: '#f1c40f',
+                bow: '#e67e22', trident: '#00bcd4', special: '#a855f7'
+            };
+            const catColor = categoryColors[e.category] || '#888';
+
+            document.getElementById('modalContent').innerHTML = `
+                <div class="modal-handle"></div>
+                <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('active')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="modal-ench-header">
+                    <span class="modal-ench-icon">${e.icon}</span>
+                    <div class="modal-ench-name">${e.nameFa}</div>
+                    <div class="modal-ench-en">${e.nameEn}</div>
+                </div>
+                <div class="modal-info-grid">
+                    <div class="modal-info-item">
+                        <i class="fa-solid fa-arrow-up" style="color:${catColor};"></i>
+                        <div class="modal-info-label">حداکثر سطح</div>
+                        <div class="modal-info-value">${e.max}</div>
+                    </div>
+                    <div class="modal-info-item">
+                        <i class="fa-solid fa-tag" style="color:${catColor};"></i>
+                        <div class="modal-info-label">دسته‌بندی</div>
+                        <div class="modal-info-value">${e.category}</div>
+                    </div>
+                    <div class="modal-info-item">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:${e.incompatible.length > 0 ? '#e74c3c' : '#2ecc71'};"></i>
+                        <div class="modal-info-label">ناسازگاری</div>
+                        <div class="modal-info-value">${e.incompatible.length} مورد</div>
+                    </div>
+                </div>
+                <div class="modal-desc-box">
+                    <div class="modal-desc-title"><i class="fa-solid fa-circle-info"></i> توضیحات</div>
+                    <p class="modal-desc-text">${e.desc}</p>
+                </div>
+                <div class="modal-desc-box">
+                    <div class="modal-desc-title"><i class="fa-solid fa-box"></i> قابل اعمال روی</div>
+                    <div class="modal-applies-to">${appliesHTML}</div>
+                </div>
+                <div class="modal-desc-box">
+                    <div class="modal-desc-title"><i class="fa-solid fa-ban"></i> ناسازگار با</div>
+                    <div class="modal-incompat-list">${incompatHTML}</div>
+                </div>
+            `;
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        document.getElementById('modalOverlay').onclick = function(e) {
+            if (e.target === this) this.classList.remove('active');
+        };
+
+        // ==================== Init ====================
+        renderEnchants();
+
+        // اسکرول دسته‌بندی به آیتم active
+        setTimeout(() => {
+            const activeChip = document.querySelector('.cat-chip.active');
+            if (activeChip) {
+                activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }, 100);
+    </script>
+</body>
+</html>

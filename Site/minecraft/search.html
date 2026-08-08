@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>جستجوی پیشرفته | BlockForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060606; --bg2: #0d0d0d; --bg3: #141414; --bg4: #1a1a1a;
+            --gold: #c8963e; --text: #e8e8e8; --text2: #a0a0a0; --text3: #666;
+            --border: #1f1f1f; --radius: 14px; --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --green: #2ecc71; --blue: #3498db; --purple: #9b59b6; --orange: #e67e22;
+            --premium-gold: #f0c040; --token-color: #00d4ff; --red: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; font-size: 15px; }
+        body {
+            font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text);
+            line-height: 1.7; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+            padding-bottom: calc(80px + var(--safe-bottom));
+        }
+
+        /* ============ هدر ============ */
+        .header {
+            background: rgba(6,6,6,0.95); backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+            padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+        }
+        .back-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--bg3);
+            border: 1px solid var(--border); color: #aaa; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem;
+            transition: 0.2s; text-decoration: none; flex-shrink: 0;
+        }
+        .back-btn:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+        .search-input-wrap {
+            flex: 1; position: relative; background: var(--bg3); border: 1px solid var(--border);
+            border-radius: 22px; padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+            transition: 0.3s;
+        }
+        .search-input-wrap:focus-within { border-color: var(--gold); box-shadow: 0 0 20px rgba(200,150,62,0.15); }
+        .search-input-wrap i { color: var(--text3); font-size: 0.85rem; }
+        .search-input-wrap input {
+            flex: 1; background: transparent; border: none; color: #fff;
+            font-family: inherit; font-size: 0.88rem; outline: none;
+        }
+        .search-input-wrap input::placeholder { color: #555; }
+        .clear-btn {
+            width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.06);
+            border: none; color: #888; cursor: pointer; font-size: 0.7rem;
+            display: none; align-items: center; justify-content: center;
+        }
+        .clear-btn.visible { display: flex; }
+
+        /* ============ محتوا ============ */
+        .search-content { padding: 16px; }
+        
+        /* ============ فیلترهای چیپ ============ */
+        .filter-section { margin-bottom: 20px; }
+        .filter-label {
+            font-size: 0.72rem; font-weight: 700; color: #888; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-chip {
+            padding: 6px 14px; border-radius: 18px; font-size: 0.66rem; font-weight: 600;
+            cursor: pointer; transition: 0.2s; background: var(--bg3); border: 1px solid var(--border);
+            color: #888; display: flex; align-items: center; gap: 5px; user-select: none;
+        }
+        .filter-chip:hover { border-color: var(--gold); color: #fff; }
+        .filter-chip.active { border-color: var(--gold); color: #000; background: var(--gold); font-weight: 700; }
+        .filter-chip.green.active { border-color: var(--green); color: #fff; background: var(--green); }
+        .filter-chip.blue.active { border-color: var(--blue); color: #fff; background: var(--blue); }
+        .filter-chip.purple.active { border-color: var(--purple); color: #fff; background: var(--purple); }
+
+        /* ============ نوار قیمت ============ */
+        .price-range-section { margin-bottom: 20px; }
+        .price-range-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        .price-range-header .label { font-size: 0.72rem; font-weight: 700; color: #888; display: flex; align-items: center; gap: 6px; }
+        .price-range-header .value {
+            font-size: 0.8rem; font-weight: 700; color: var(--gold);
+            background: rgba(200,150,62,0.08); padding: 4px 12px; border-radius: 12px;
+            border: 1px solid rgba(200,150,62,0.2);
+        }
+        .price-range-slider {
+            position: relative; height: 40px; display: flex; align-items: center;
+            padding: 0 8px;
+        }
+        .price-range-slider input[type="range"] {
+            -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+            background: #1a1a1a; border-radius: 6px; outline: none; position: absolute;
+        }
+        .price-range-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none; width: 28px; height: 28px;
+            border-radius: 50%; background: var(--gold); cursor: pointer;
+            box-shadow: 0 3px 15px rgba(200,150,62,0.5); border: 3px solid #fff;
+            position: relative; z-index: 2;
+        }
+        .price-range-track {
+            position: absolute; height: 6px; background: linear-gradient(90deg, var(--gold), #f0c040);
+            border-radius: 6px; pointer-events: none; z-index: 1;
+        }
+        .price-range-labels {
+            display: flex; justify-content: space-between; margin-top: 6px;
+            font-size: 0.62rem; color: #666;
+        }
+
+        /* ============ سوییچ‌ها ============ */
+        .switch-section { margin-bottom: 20px; }
+        .switch-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 12px; margin-bottom: 8px; transition: 0.3s;
+        }
+        .switch-row.active { border-color: var(--green); background: rgba(46,204,113,0.04); }
+        .switch-row.purple-active { border-color: var(--purple); background: rgba(168,85,247,0.04); }
+        .switch-info { display: flex; align-items: center; gap: 10px; }
+        .switch-info i { font-size: 1rem; width: 24px; text-align: center; color: var(--gold); }
+        .switch-info .switch-label { font-size: 0.78rem; font-weight: 600; color: #fff; }
+        .switch-toggle {
+            width: 48px; height: 28px; border-radius: 14px; background: #1a1a1a;
+            border: 1px solid var(--border); cursor: pointer; transition: 0.3s;
+            position: relative; flex-shrink: 0;
+        }
+        .switch-toggle.active { background: var(--green); border-color: var(--green); }
+        .switch-toggle.purple { background: var(--purple); border-color: var(--purple); }
+        .switch-toggle::after {
+            content: ''; position: absolute; top: 3px; right: 3px;
+            width: 20px; height: 20px; border-radius: 50%; background: #fff;
+            transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .switch-toggle.active::after { right: 23px; }
+
+        /* ============ نتیجه ============ */
+        .result-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+        }
+        .result-header .count { font-size: 0.78rem; color: #888; }
+        .result-header .count span { color: var(--gold); font-weight: 700; }
+        .result-header .sort-btn {
+            padding: 6px 12px; border-radius: 14px; font-size: 0.64rem; font-weight: 600;
+            cursor: pointer; transition: 0.2s; background: var(--bg3); border: 1px solid var(--border);
+            color: #888; display: flex; align-items: center; gap: 4px;
+        }
+        .result-header .sort-btn:hover { border-color: var(--gold); color: #fff; }
+
+        .results-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;
+        }
+        .no-result {
+            text-align: center; padding: 50px 20px; color: #555; grid-column: 1/-1;
+        }
+        .no-result i { font-size: 3rem; display: block; margin-bottom: 12px; color: #222; }
+
+        /* ============ کارت‌ها (کپی از index.html) ============ */
+        .card {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+            overflow: hidden; cursor: pointer; transition: all 0.3s ease;
+            opacity: 0; animation: fadeUp 0.4s ease forwards; position: relative;
+        }
+        .card:nth-child(1) { animation-delay: 0.02s; } .card:nth-child(2) { animation-delay: 0.07s; }
+        .card:nth-child(3) { animation-delay: 0.12s; } .card:nth-child(4) { animation-delay: 0.17s; }
+        .card:nth-child(5) { animation-delay: 0.22s; } .card:nth-child(6) { animation-delay: 0.27s; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0,0,0,0.4); z-index: 5; }
+        .card-img {
+            height: 100px; background-size: cover; background-position: center;
+            position: relative; transition: transform 0.4s ease;
+        }
+        .card:hover .card-img { transform: scale(1.04); }
+        .card-img .c-badge {
+            position: absolute; top: 8px; right: 8px;
+            background: rgba(46,204,113,0.2); color: #2ecc71;
+            padding: 3px 10px; border-radius: 8px; font-weight: 700; font-size: 0.56rem;
+            backdrop-filter: blur(4px); border: 1px solid rgba(46,204,113,0.3); z-index: 2;
+        }
+        .card-img .c-ver {
+            position: absolute; bottom: 8px; left: 8px;
+            background: rgba(0,0,0,0.75); color: #fff; padding: 3px 8px;
+            border-radius: 6px; font-size: 0.56rem; backdrop-filter: blur(4px); z-index: 2;
+        }
+        .card-img .c-discount-badge {
+            position: absolute; top: 36px; right: 8px; background: var(--red); color: #fff;
+            padding: 2px 7px; border-radius: 6px; font-weight: 700; font-size: 0.54rem; z-index: 2;
+        }
+        .card-body { padding: 8px 10px; }
+        .card-body h4 { font-size: 0.74rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-body .c-author { font-size: 0.6rem; color: #555; margin-bottom: 3px; }
+        .card-body .c-price-row { display: flex; align-items: center; gap: 5px; font-size: 0.62rem; margin-bottom: 3px; }
+        .card-body .c-price-original { color: #666; text-decoration: line-through; font-size: 0.56rem; }
+        .card-body .c-price-final { color: var(--green); font-weight: 700; }
+        .card-body .c-meta { display: flex; justify-content: space-between; font-size: 0.58rem; color: #555; margin-bottom: 6px; }
+        .card-body .c-rating { color: #f1c40f; font-size: 0.54rem; margin-bottom: 3px; }
+        .c-dl-btn {
+            width: 100%; background: linear-gradient(135deg, #c8963e, #a67c2e); color: #000;
+            border: none; padding: 8px 8px; border-radius: 8px; font-weight: 700;
+            cursor: pointer; font-size: 0.66rem; font-family: inherit;
+            transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;
+            box-shadow: 0 3px 12px rgba(200,150,62,0.3);
+        }
+        .c-dl-btn:hover { transform: translateY(-1px); }
+        .c-dl-btn.free, .c-dl-btn.purchased {
+            background: linear-gradient(135deg, #1a6b2a, #0f4a1a) !important;
+            color: #fff !important; box-shadow: 0 3px 15px rgba(46,204,113,0.4) !important;
+        }
+
+        /* ============ نوار پایین ============ */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(6,6,6,0.97); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 8px 0 calc(8px + var(--safe-bottom)); z-index: 50;
+        }
+        .bottom-nav a {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            color: #555; text-decoration: none; font-size: 0.6rem;
+            padding: 4px 8px; transition: 0.2s;
+        }
+        .bottom-nav a i { font-size: 1.2rem; }
+        .bottom-nav a.active { color: var(--gold); }
+    </style>
+</head>
+<body>
+
+    <!-- ============ هدر ============ -->
+    <header class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+        <div class="search-input-wrap" id="searchWrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="جستجو در BlockForge..." id="searchInput" autocomplete="off">
+            <button class="clear-btn" id="clearBtn" onclick="clearSearch()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </header>
+
+    <!-- ============ محتوا ============ -->
+    <div class="search-content">
+        
+        <!-- فیلترهای چیپ -->
+        <div class="filter-section">
+            <div class="filter-label"><i class="fa-solid fa-list"></i> مرتب‌سازی</div>
+            <div class="filter-chips" id="sortChips">
+                <span class="filter-chip active" data-sort="default"><i class="fa-solid fa-arrow-down-wide-short"></i> پیش‌فرض</span>
+                <span class="filter-chip" data-sort="cheap"><i class="fa-solid fa-coins"></i> ارزان‌ترین</span>
+                <span class="filter-chip" data-sort="expensive"><i class="fa-solid fa-coins"></i> گران‌ترین</span>
+                <span class="filter-chip" data-sort="rated"><i class="fa-solid fa-star"></i> محبوب‌ترین</span>
+                <span class="filter-chip" data-sort="newest"><i class="fa-solid fa-clock"></i> جدیدترین</span>
+            </div>
+        </div>
+
+        <!-- نوار قیمت -->
+        <div class="price-range-section">
+            <div class="price-range-header">
+                <span class="label"><i class="fa-solid fa-coins"></i> محدوده قیمت (توکن)</span>
+                <span class="value" id="priceDisplay">۰ تا ∞</span>
+            </div>
+            <div class="price-range-slider">
+                <input type="range" min="0" max="5000" value="5000" step="50" id="priceSlider" oninput="updatePriceSlider()">
+                <div class="price-range-track" id="priceTrack"></div>
+            </div>
+            <div class="price-range-labels">
+                <span>۰</span>
+                <span>۱۰۰۰</span>
+                <span>۲۰۰۰</span>
+                <span>۳۰۰۰</span>
+                <span>۴۰۰۰</span>
+                <span>۵۰۰۰+</span>
+            </div>
+        </div>
+
+        <!-- سوییچ‌ها -->
+        <div class="switch-section">
+            <div class="switch-row" id="switchFree" onclick="toggleSwitch('free')">
+                <div class="switch-info">
+                    <i class="fa-solid fa-gift"></i>
+                    <span class="switch-label">فقط رایگان</span>
+                </div>
+                <div class="switch-toggle" id="toggleFree"></div>
+            </div>
+            <div class="switch-row" id="switchDiscount" onclick="toggleSwitch('discount')">
+                <div class="switch-info">
+                    <i class="fa-solid fa-tag"></i>
+                    <span class="switch-label">فقط تخفیف‌دار</span>
+                </div>
+                <div class="switch-toggle" id="toggleDiscount"></div>
+            </div>
+            <div class="switch-row" id="switchHighRate" onclick="toggleSwitch('highrate')">
+                <div class="switch-info">
+                    <i class="fa-solid fa-star"></i>
+                    <span class="switch-label">امتیاز بالای ۴.۵</span>
+                </div>
+                <div class="switch-toggle" id="toggleHighRate"></div>
+            </div>
+        </div>
+
+        <!-- نتایج -->
+        <div class="result-header">
+            <div class="count"><span id="resultCount">0</span> آیتم پیدا شد</div>
+            <button class="sort-btn" onclick="resetAll()"><i class="fa-solid fa-rotate"></i> حذف فیلترها</button>
+        </div>
+        <div class="results-grid" id="resultsGrid"></div>
+    </div>
+
+    <!-- ============ نوار پایین ============ -->
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fa-solid fa-house"></i> خانه</a>
+        <a href="premium.html"><i class="fa-solid fa-crown" style="color:var(--premium-gold);"></i> پرمیوم</a>
+        <a href="#" onclick="window.location.href='index.html';setTimeout(()=>parent.showSaved?.(),300);"><i class="fa-solid fa-bookmark"></i> ذخیره‌شده</a>
+    </nav>
+
+    <script src="mods.js"></script>
+    <script>
+        // ==================== داده‌ها ====================
+        let items = [];
+        let filters = { free: false, discount: false, highrate: false, maxPrice: 5000, sort: 'default' };
+        let searchQuery = '';
+
+        function build() {
+            if (typeof MY_CONTENT === 'undefined') return [];
+            return MY_CONTENT.map((i, idx) => ({ id: idx + 1, ...i, img: i.img || 'https://picsum.photos/seed/' + (idx + 1) + '/400/250' }));
+        }
+
+        function getPrice(item) { if (!item || !item.price) return { og: 0, fn: 0, hasD: false, d: 0 }; const o = item.price, d = item.discount || 0; return { og: o, fn: Math.round(o - (o * d / 100)), hasD: d > 0, d }; }
+        function getCost(item) { const p = getPrice(item); return p.fn > 0 ? p.fn : 0; }
+
+        // ==================== نوار قیمت ====================
+        function updatePriceSlider() {
+            const slider = document.getElementById('priceSlider');
+            const val = parseInt(slider.value);
+            const max = parseInt(slider.max);
+            const pct = (val / max) * 100;
+            
+            document.getElementById('priceTrack').style.width = pct + '%';
+            
+            if (val >= max) {
+                document.getElementById('priceDisplay').textContent = '۰ تا ∞';
+                filters.maxPrice = Infinity;
+            } else {
+                document.getElementById('priceDisplay').textContent = '۰ تا ' + val.toLocaleString('fa');
+                filters.maxPrice = val;
+            }
+            
+            applyAll();
+        }
+
+        // ==================== سوییچ‌ها ====================
+        function toggleSwitch(type) {
+            filters[type] = !filters[type];
+            updateSwitchUI();
+            applyAll();
+        }
+
+        function updateSwitchUI() {
+            const toggleFree = document.getElementById('toggleFree');
+            const toggleDiscount = document.getElementById('toggleDiscount');
+            const toggleHighRate = document.getElementById('toggleHighRate');
+            const rowFree = document.getElementById('switchFree');
+            const rowDiscount = document.getElementById('switchDiscount');
+            const rowHighRate = document.getElementById('switchHighRate');
+
+            if (filters.free) { toggleFree.classList.add('active'); rowFree.classList.add('active'); }
+            else { toggleFree.classList.remove('active'); rowFree.classList.remove('active'); }
+
+            if (filters.discount) { toggleDiscount.classList.add('active'); rowDiscount.classList.add('active'); }
+            else { toggleDiscount.classList.remove('active'); rowDiscount.classList.remove('active'); }
+
+            if (filters.highrate) { toggleHighRate.classList.add('active'); rowHighRate.classList.add('purple-active'); }
+            else { toggleHighRate.classList.remove('active'); rowHighRate.classList.remove('purple-active'); }
+        }
+
+        // ==================== مرتب‌سازی ====================
+        document.getElementById('sortChips').addEventListener('click', function(e) {
+            const chip = e.target.closest('.filter-chip');
+            if (!chip) return;
+            document.querySelectorAll('#sortChips .filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            filters.sort = chip.dataset.sort;
+            applyAll();
+        });
+
+        function sortItems(arr) {
+            switch (filters.sort) {
+                case 'cheap': return [...arr].sort((a, b) => getCost(a) - getCost(b));
+                case 'expensive': return [...arr].sort((a, b) => getCost(b) - getCost(a));
+                case 'rated': return [...arr].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                case 'newest': return [...arr].reverse();
+                default: return arr;
+            }
+        }
+
+        // ==================== اعمال فیلتر ====================
+        function applyAll() {
+            let result = [...items];
+
+            // جستجوی متنی
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                result = result.filter(i =>
+                    i.title.toLowerCase().includes(q) ||
+                    i.cat.includes(q) ||
+                    i.author.toLowerCase().includes(q) ||
+                    (i.desc && i.desc.toLowerCase().includes(q))
+                );
+            }
+
+            // فیلتر رایگان
+            if (filters.free) result = result.filter(i => getCost(i) === 0);
+
+            // فیلتر تخفیف‌دار
+            if (filters.discount) result = result.filter(i => getPrice(i).hasD);
+
+            // فیلتر امتیاز بالا
+            if (filters.highrate) result = result.filter(i => i.rating && i.rating >= 4.5);
+
+            // فیلتر قیمت
+            if (filters.maxPrice !== Infinity) {
+                result = result.filter(i => getCost(i) <= filters.maxPrice);
+            }
+
+            // مرتب‌سازی
+            result = sortItems(result);
+
+            // نمایش
+            document.getElementById('resultCount').textContent = result.length.toLocaleString('fa');
+            const grid = document.getElementById('resultsGrid');
+            if (result.length === 0) {
+                grid.innerHTML = '<div class="no-result"><i class="fa-solid fa-search"></i><p>هیچ آیتمی پیدا نشد</p></div>';
+            } else {
+                grid.innerHTML = result.map(i => cardHTML(i)).join('');
+                bindCards(grid);
+            }
+        }
+
+        // ==================== کارت ====================
+        function cardHTML(item) {
+            const price = getPrice(item);
+            const cost = getCost(item);
+            return `
+            <div class="card" data-id="${item.id}" onclick="openItem(${item.id})">
+                <div class="card-img" style="background-image:url('${item.img}');">
+                    <span class="c-badge"><i class="fa-solid fa-check"></i></span>
+                    <span class="c-ver">${item.version}</span>
+                    ${price.hasD ? `<span class="c-discount-badge">-${price.d}%</span>` : ''}
+                </div>
+                <div class="card-body">
+                    <h4>${item.title}</h4>
+                    <div class="c-author"><i class="fa-solid fa-user"></i> ${item.author}</div>
+                    ${price.hasD ? 
+                        `<div class="c-price-row"><span class="c-price-original">${price.og.toLocaleString('fa')}</span><span class="c-price-final">${price.fn.toLocaleString('fa')} <i class="fa-solid fa-coins"></i></span></div>` :
+                        (cost > 0 ? 
+                            `<div class="c-price-row"><span class="c-price-final"><i class="fa-solid fa-coins"></i> ${price.og.toLocaleString('fa')}</span></div>` :
+                            `<div class="c-price-row"><span class="c-price-final" style="color:var(--green);">رایگان</span></div>`)
+                    }
+                    ${item.rating ? `<div class="c-rating"><i class="fa-solid fa-star"></i> ${item.rating}</div>` : ''}
+                    <div class="c-meta">
+                        <span><i class="fa-solid fa-weight-hanging"></i> ${item.size}</span>
+                        <span><i class="fa-solid fa-code-branch"></i> ${item.version}</span>
+                    </div>
+                    <button class="c-dl-btn${cost === 0 ? ' free' : ''}" onclick="event.stopPropagation();downloadItem(${item.id})">
+                        ${cost === 0 ? '<i class="fa-solid fa-download"></i> دانلود رایگان' : `<i class="fa-solid fa-cart-shopping"></i> خرید (${cost.toLocaleString('fa')})`}
+                    </button>
+                </div>
+            </div>`;
+        }
+
+        function bindCards(container) {
+            container.querySelectorAll('.c-dl-btn').forEach(b => {
+                b.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    downloadItem(parseInt(this.closest('.card').dataset.id));
+                });
+            });
+        }
+
+        function openItem(id) {
+            window.location.href = 'index.html?open=' + id;
+        }
+
+        function downloadItem(id) {
+            const item = items.find(i => i.id === id);
+            if (!item || !item.downloadUrl) return;
+            
+            const cost = getCost(item);
+            const tokens = JSON.parse(localStorage.getItem('bf_tokens') || '{"tokens":2000,"last":' + Date.now() + '}').tokens;
+            
+            if (cost > 0 && tokens < cost) {
+                alert('توکن ناکافی! نیاز به ' + cost.toLocaleString('fa') + ' توکن داری.');
+                return;
+            }
+
+            // کسر توکن
+            if (cost > 0) {
+                const d = JSON.parse(localStorage.getItem('bf_tokens') || '{"tokens":2000,"last":' + Date.now() + '}');
+                d.tokens -= cost;
+                localStorage.setItem('bf_tokens', JSON.stringify(d));
+            }
+
+            // ثبت دانلود
+            localStorage.setItem('bf_totaldl', (parseInt(localStorage.getItem('bf_totaldl') || '0') + 1).toString());
+            
+            // باز کردن لینک
+            window.open(item.downloadUrl, '_blank');
+            
+            // نوتیفیکیشن ساده
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#181818;border:1px solid #2a2a2a;border-radius:12px;padding:12px 18px;z-index:999;color:#fff;font-size:0.8rem;box-shadow:0 10px 30px rgba(0,0,0,0.8);animation:fadeIn 0.3s ease;';
+            toast.innerHTML = '<i class="fa-solid fa-check" style="color:#2ecc71;margin-left:8px;"></i>دانلود شروع شد!';
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2000);
+        }
+
+        // ==================== سرچ ====================
+        document.getElementById('searchInput').addEventListener('input', function() {
+            searchQuery = this.value.trim();
+            const clearBtn = document.getElementById('clearBtn');
+            if (searchQuery) { clearBtn.classList.add('visible'); }
+            else { clearBtn.classList.remove('visible'); }
+            applyAll();
+        });
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            document.getElementById('clearBtn').classList.remove('visible');
+            applyAll();
+        }
+
+        function resetAll() {
+            filters = { free: false, discount: false, highrate: false, maxPrice: 5000, sort: 'default' };
+            document.getElementById('priceSlider').value = 5000;
+            document.getElementById('priceTrack').style.width = '100%';
+            document.getElementById('priceDisplay').textContent = '۰ تا ∞';
+            document.querySelectorAll('#sortChips .filter-chip').forEach(c => c.classList.remove('active'));
+            document.querySelector('#sortChips .filter-chip[data-sort="default"]').classList.add('active');
+            updateSwitchUI();
+            applyAll();
+        }
+
+        // ==================== شروع ====================
+        items = build();
+        updatePriceSlider();
+        applyAll();
+    </script>
+</body>
+</html>

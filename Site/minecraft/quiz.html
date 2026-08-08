@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>مسابقه ماینکرفت | BlockForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060606; --bg2: #0d0d0d; --bg3: #141414;
+            --gold: #c8963e; --text: #e8e8e8; --text2: #a0a0a0; --text3: #666;
+            --border: #1f1f1f; --radius: 14px; --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --green: #2ecc71; --blue: #3498db; --purple: #9b59b6; --orange: #e67e22;
+            --premium-gold: #f0c040; --red: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; font-size: 15px; }
+        body {
+            font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text);
+            line-height: 1.7; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
+
+        .header {
+            background: rgba(6,6,6,0.95); backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+            padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
+        .logo-icon {
+            width: 38px; height: 38px; background: linear-gradient(135deg, #c8963e, #7a5a2e);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: #fff; font-weight: 900;
+            box-shadow: 0 4px 15px rgba(200,150,62,0.3);
+        }
+        .logo-text { font-weight: 900; font-size: 1.2rem; color: #fff; } .logo-text span { color: var(--gold); }
+        .back-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--bg3);
+            border: 1px solid var(--border); color: #aaa; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem;
+            transition: 0.2s; text-decoration: none;
+        }
+        .back-btn:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        .quiz-container {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 20px; max-width: 500px; margin: 0 auto; width: 100%;
+        }
+
+        /* ============ صفحه شروع ============ */
+        .quiz-start {
+            text-align: center; padding: 30px 20px;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 24px; width: 100%;
+        }
+        .quiz-start-icon { font-size: 5rem; color: #8b5cf6; margin-bottom: 16px; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .quiz-start h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: #fff; }
+        .quiz-start p { font-size: 0.82rem; color: #888; margin-bottom: 10px; line-height: 2; }
+        .quiz-start .reward { color: #2ecc71; font-size: 0.9rem; font-weight: 700; margin-bottom: 20px; }
+        .btn-start {
+            width: 100%; padding: 16px; border-radius: 16px; font-weight: 800;
+            cursor: pointer; font-size: 0.95rem; font-family: inherit; transition: 0.3s; border: none;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff;
+            box-shadow: 0 6px 25px rgba(139,92,246,0.4);
+        }
+        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 10px 35px rgba(139,92,246,0.6); }
+        .btn-start:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ============ سوالات ============ */
+        .quiz-question-box {
+            width: 100%; background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 20px; padding: 24px 20px; text-align: center; display: none;
+        }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .quiz-progress { font-size: 0.78rem; color: #888; }
+        .quiz-progress span { color: var(--gold); font-weight: 700; }
+        .quiz-score { font-size: 0.78rem; color: #2ecc71; font-weight: 700; }
+        .quiz-q { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 20px; line-height: 2; }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+        .quiz-opt {
+            background: var(--bg3); border: 2px solid var(--border); border-radius: 14px;
+            padding: 14px 16px; cursor: pointer; font-weight: 600; font-size: 0.88rem;
+            color: var(--text2); transition: all 0.2s; text-align: right; font-family: inherit;
+        }
+        .quiz-opt:hover { border-color: var(--gold); color: #fff; background: #1a1200; }
+        .quiz-opt.correct { border-color: var(--green); background: rgba(46,204,113,0.15); color: var(--green); }
+        .quiz-opt.wrong { border-color: var(--red); background: rgba(231,76,60,0.15); color: var(--red); }
+        .quiz-opt:disabled { pointer-events: none; opacity: 0.7; }
+        .quiz-result-text { font-size: 0.9rem; font-weight: 800; margin-top: 16px; }
+
+        /* ============ پایان ============ */
+        .quiz-end {
+            text-align: center; padding: 30px 20px;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 24px; width: 100%; display: none;
+        }
+        .quiz-end-icon { font-size: 5rem; color: var(--premium-gold); margin-bottom: 16px; }
+        .quiz-end h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: #fff; }
+        .quiz-end .score { font-size: 1.5rem; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
+        .quiz-end .reward { color: #2ecc71; font-size: 1rem; font-weight: 700; margin-bottom: 20px; }
+        .btn-back {
+            width: 100%; padding: 14px; border-radius: 14px; font-weight: 700;
+            cursor: pointer; font-size: 0.85rem; font-family: inherit; transition: 0.3s; border: none;
+            background: var(--bg3); color: #aaa; border: 1px solid var(--border);
+        }
+        .btn-back:hover { background: #1a1a1a; color: #fff; }
+        .quiz-resume-notice {
+            background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3);
+            border-radius: 12px; padding: 12px; margin-top: 16px; font-size: 0.75rem; color: #a855f7;
+        }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(6,6,6,0.97); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 8px 0 calc(8px + var(--safe-bottom)); z-index: 50;
+        }
+        .bottom-nav a {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            color: #555; text-decoration: none; font-size: 0.62rem;
+            padding: 4px 10px; transition: 0.2s; position: relative;
+        }
+        .bottom-nav a i { font-size: 1.3rem; }
+        .bottom-nav a.active { color: var(--gold); }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-cubes"></i></div>
+            <div class="logo-text">Block<span>Forge</span></div>
+        </div>
+        <div style="width:36px;"></div>
+    </header>
+
+    <div class="quiz-container">
+        <!-- صفحه شروع -->
+        <div class="quiz-start" id="quizStart">
+            <div class="quiz-start-icon"><i class="fa-solid fa-question-circle"></i></div>
+            <h2>مسابقه ماینکرفت</h2>
+            <p>۱۰ سوال از دنیای ماینکرفت!<br>هر جواب درست = <strong>۵۰ توکن</strong></p>
+            <p class="reward"><i class="fa-solid fa-coins"></i> تا ۵۰۰ توکن جایزه بگیر!</p>
+            <div class="quiz-resume-notice" id="resumeNotice" style="display:none;">
+                <i class="fa-solid fa-rotate"></i> یه مسابقه نیمه‌تموم داری! از همونجا ادامه بده.
+            </div>
+            <button class="btn-start" id="btnStart" onclick="startQuiz()">
+                <i class="fa-solid fa-play"></i> <span id="btnStartText">شروع مسابقه</span>
+            </button>
+        </div>
+
+        <!-- سوالات -->
+        <div class="quiz-question-box" id="quizBox">
+            <div class="quiz-header">
+                <div class="quiz-progress">سوال <span id="qNum">1</span> از ۱۰</div>
+                <div class="quiz-score"><i class="fa-solid fa-check"></i> <span id="qScore">0</span> درست</div>
+            </div>
+            <div class="quiz-q" id="qText"></div>
+            <div class="quiz-options" id="qOptions"></div>
+            <div class="quiz-result-text" id="qResult"></div>
+        </div>
+
+        <!-- پایان -->
+        <div class="quiz-end" id="quizEnd">
+            <div class="quiz-end-icon"><i class="fa-solid fa-trophy"></i></div>
+            <h2>مسابقه تموم شد!</h2>
+            <div class="score" id="endScore">0 از ۱۰</div>
+            <div class="reward" id="endReward"></div>
+            <button class="btn-back" onclick="window.location.href='index.html';">
+                <i class="fa-solid fa-house"></i> برگشت به خانه
+            </button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fa-solid fa-house"></i> خانه</a>
+        <a href="premium.html"><i class="fa-solid fa-crown" style="color:var(--premium-gold);"></i> پرمیوم</a>
+        <a href="#" onclick="window.location.href='index.html';setTimeout(()=>parent.showSaved?.(),300);"><i class="fa-solid fa-bookmark"></i> ذخیره‌شده</a>
+    </nav>
+
+    <script>
+        const QUESTIONS = [
+            { q: 'بازی ماینکرفت توسط چه شرکتی ساخته شده؟', opts: ['Mojang', 'Microsoft', 'Google', 'Apple'], ans: 'Mojang' },
+            { q: 'اولین نسخه ماینکرفت در چه سالی منتشر شد؟', opts: ['2009', '2011', '2010', '2008'], ans: '2009' },
+            { q: 'اسم دنیای اصلی ماینکرفت چیه؟', opts: ['Overworld', 'Nether', 'End', 'Skyland'], ans: 'Overworld' },
+            { q: 'کدوم ماب توی End زندگی می‌کنه؟', opts: ['Ender Dragon', 'Wither', 'Zombie', 'Skeleton'], ans: 'Ender Dragon' },
+            { q: 'برای رفتن به Nether چی نیاز داری؟', opts: ['Obsidian Portal', 'Diamond Block', 'Gold Block', 'Iron Door'], ans: 'Obsidian Portal' },
+            { q: 'اسم سازنده اصلی ماینکرفت چیه؟', opts: ['Notch', 'Jeb', 'Dinnerbone', 'Steve'], ans: 'Notch' },
+            { q: 'بلوک Diamond Ore تو کدوم لایه پیدا میشه؟', opts: ['زیر ۱۶', 'بالای ۳۲', 'لایه ۶۴', 'هرجا'], ans: 'زیر ۱۶' },
+            { q: 'کدوم بایوم درختی نیست؟', opts: ['Desert', 'Forest', 'Jungle', 'Taiga'], ans: 'Desert' },
+            { q: 'چند تا Obsidian برای پورتال Nether نیاز داری؟', opts: ['۱۰', '۱۴', '۸', '۱۲'], ans: '۱۰' },
+            { q: 'کدوم mob از Creeper می‌ترسه؟', opts: ['Ocelot', 'Dog', 'Cat', 'Wolf'], ans: 'Ocelot' },
+        ];
+
+        // ==================== ذخیره و بازیابی وضعیت مسابقه ====================
+        function getQuizState() {
+            return JSON.parse(localStorage.getItem('bf_quiz_state') || 'null');
+        }
+        function saveQuizState(state) {
+            localStorage.setItem('bf_quiz_state', JSON.stringify(state));
+        }
+        function clearQuizState() {
+            localStorage.removeItem('bf_quiz_state');
+        }
+        function isQuizFullyDone() {
+            return localStorage.getItem('bf_quiz_done') === 'true';
+        }
+
+        let quizQuestions = null;
+        let currentQ = 0;
+        let correctCount = 0;
+
+        function shuffle(arr) {
+            const s = [...arr];
+            for (let i = s.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [s[i], s[j]] = [s[j], s[i]]; }
+            return s;
+        }
+
+        function startQuiz() {
+            const saved = getQuizState();
+            
+            if (saved && !saved.finished) {
+                // ادامه مسابقه نیمه‌تموم
+                quizQuestions = saved.questions;
+                currentQ = saved.currentQ;
+                correctCount = saved.correctCount;
+            } else if (isQuizFullyDone()) {
+                // کاملاً تموم شده
+                document.getElementById('quizStart').innerHTML = `
+                    <div class="quiz-start-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <h2>قبلاً شرکت کردی!</h2>
+                    <p style="color:#888;">منتظر مسابقه بعدی باش!</p>
+                    <button class="btn-back" onclick="window.location.href='index.html';" style="margin-top:16px;">برگشت به خانه</button>
+                `;
+                return;
+            } else {
+                // شروع جدید
+                quizQuestions = shuffle(QUESTIONS).slice(0, 10);
+                currentQ = 0;
+                correctCount = 0;
+            }
+            
+            // ذخیره وضعیت اولیه
+            saveQuizState({
+                questions: quizQuestions,
+                currentQ: currentQ,
+                correctCount: correctCount,
+                finished: false
+            });
+            
+            document.getElementById('quizStart').style.display = 'none';
+            document.getElementById('quizBox').style.display = 'block';
+            document.getElementById('quizEnd').style.display = 'none';
+            document.getElementById('resumeNotice').style.display = 'none';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQ >= quizQuestions.length) {
+                endQuiz();
+                return;
+            }
+            const q = quizQuestions[currentQ];
+            const opts = shuffle(q.opts);
+            document.getElementById('qNum').textContent = currentQ + 1;
+            document.getElementById('qScore').textContent = correctCount;
+            document.getElementById('qText').textContent = q.q;
+            document.getElementById('qResult').textContent = '';
+            document.getElementById('qOptions').innerHTML = opts.map(o =>
+                `<button class="quiz-opt" onclick="answer('${o.replace(/'/g, "\\'")}')">${o}</button>`
+            ).join('');
+        }
+
+        function answer(selected) {
+            const q = quizQuestions[currentQ];
+            const correct = selected === q.ans;
+            if (correct) correctCount++;
+
+            const btns = document.querySelectorAll('.quiz-opt');
+            btns.forEach(b => {
+                b.disabled = true;
+                if (b.textContent.trim() === q.ans) b.classList.add('correct');
+                if (b.textContent.trim() === selected && !correct) b.classList.add('wrong');
+            });
+
+            document.getElementById('qResult').innerHTML = correct
+                ? '<i class="fa-solid fa-check-circle"></i> <span style="color:#2ecc71;">درسته! (+۵۰ توکن)</span>'
+                : '<i class="fa-solid fa-xmark-circle"></i> <span style="color:#e74c3c;">غلط! جواب: ' + q.ans + '</span>';
+
+            currentQ++;
+            
+            // ذخیره وضعیت بعد از هر جواب
+            saveQuizState({
+                questions: quizQuestions,
+                currentQ: currentQ,
+                correctCount: correctCount,
+                finished: false
+            });
+
+            setTimeout(() => { showQuestion(); }, 1500);
+        }
+
+        function endQuiz() {
+            document.getElementById('quizBox').style.display = 'none';
+            document.getElementById('quizEnd').style.display = 'block';
+            const reward = correctCount * 50;
+            document.getElementById('endScore').textContent = correctCount + ' از ' + quizQuestions.length;
+            document.getElementById('endReward').innerHTML = '<i class="fa-solid fa-coins"></i> ' + reward.toLocaleString('fa') + ' توکن جایزه!';
+
+            // اعمال لحظه‌ای توکن
+            const d = JSON.parse(localStorage.getItem('bf_tokens') || '{"tokens":2000,"last":' + Date.now() + '}');
+            d.tokens = Math.min(50000, d.tokens + reward);
+            localStorage.setItem('bf_tokens', JSON.stringify(d));
+
+            // ذخیره توکن توی یه کلید جداگونه برای نمایش لحظه‌ای
+            localStorage.setItem('bf_token_update', Date.now().toString());
+            localStorage.setItem('bf_last_reward', reward.toString());
+
+            // پاک کردن وضعیت و قفل کردن
+            clearQuizState();
+            localStorage.setItem('bf_quiz_done', 'true');
+        }
+
+        // ==================== راه‌اندازی ====================
+        function init() {
+            const saved = getQuizState();
+            const fullyDone = isQuizFullyDone();
+            
+            if (fullyDone) {
+                document.getElementById('btnStart').textContent = 'قبلاً شرکت کردی';
+                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStart').style.opacity = '0.5';
+                document.getElementById('btnStartText').textContent = 'قبلاً شرکت کردی';
+            } else if (saved && !saved.finished) {
+                // مسابقه نیمه‌تموم
+                document.getElementById('resumeNotice').style.display = 'block';
+                document.getElementById('btnStartText').textContent = 'ادامه مسابقه';
+                document.getElementById('btnStart').innerHTML = '<i class="fa-solid fa-rotate"></i> <span id="btnStartText">ادامه مسابقه</span>';
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>

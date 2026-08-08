@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>کامند جنریتور بدراک | BlockForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060608; --bg2: rgba(15,15,20,0.6); --glass: rgba(20,20,28,0.5);
+            --glass-border: rgba(255,255,255,0.06); --gold: #d4a54a;
+            --text: #e8e8e8; --text2: #a8a8a8; --text3: #707070;
+            --border: rgba(255,255,255,0.06); --radius: 14px; --radius-lg: 20px;
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --green: #2ecc71; --blue: #3498db; --purple: #a855f7; --orange: #e67e22;
+            --red: #e74c3c; --cyan: #00bcd4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; font-size: 15px; }
+        body {
+            font-family: 'Vazirmatn', sans-serif; background: var(--bg);
+            background-image: 
+                radial-gradient(ellipse at 30% 10%, rgba(168,85,247,0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(52,152,219,0.02) 0%, transparent 60%);
+            color: var(--text); line-height: 1.7; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; padding-bottom: calc(20px + var(--safe-bottom));
+        }
+
+        .header {
+            background: rgba(8,8,12,0.85); backdrop-filter: blur(30px) saturate(160%);
+            -webkit-backdrop-filter: blur(30px) saturate(160%); border-bottom: 1px solid var(--glass-border);
+            position: sticky; top: 0; z-index: 100; padding: 8px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .back-btn {
+            width: 34px; height: 34px; border-radius: 50%; background: var(--glass);
+            border: 1px solid var(--glass-border); color: #bbb; cursor: pointer;
+            font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s; text-decoration: none;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .header-title {
+            font-weight: 800; font-size: 0.95rem; color: #fff;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .header-title i { color: var(--purple); }
+
+        /* ========== انتخاب کامند ========== */
+        .command-selector {
+            margin: 12px 16px; padding: 12px 14px;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius); backdrop-filter: blur(10px);
+        }
+        .selector-label {
+            font-size: 0.64rem; color: #888; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .selector-label i { color: var(--purple); }
+        .command-list {
+            display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+        .command-list::-webkit-scrollbar { display: none; }
+        .cmd-chip {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 8px 14px; font-size: 0.66rem;
+            color: #aaa; white-space: nowrap; cursor: pointer;
+            transition: all 0.3s; flex-shrink: 0; font-family: inherit;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .cmd-chip:hover { border-color: rgba(168,85,247,0.3); color: #fff; }
+        .cmd-chip.active {
+            background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.5);
+            color: #fff; font-weight: 700;
+        }
+        .cmd-chip .chip-icon {
+            width: 20px; height: 20px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.5rem;
+        }
+        .chip-icon.give { background: rgba(46,204,113,0.2); color: #2ecc71; }
+        .chip-icon.tp { background: rgba(52,152,219,0.2); color: #3498db; }
+        .chip-icon.gm { background: rgba(241,196,15,0.2); color: #f1c40f; }
+        .chip-icon.effect { background: rgba(168,85,247,0.2); color: #a855f7; }
+        .chip-icon.summon { background: rgba(230,126,34,0.2); color: #e67e22; }
+        .chip-icon.time { background: rgba(0,188,212,0.2); color: #00bcd4; }
+        .chip-icon.world { background: rgba(231,76,60,0.2); color: #e74c3c; }
+        .chip-icon.other { background: rgba(255,255,255,0.08); color: #aaa; }
+
+        /* ========== فرم پارامترها ========== */
+        .params-section {
+            margin: 8px 16px; padding: 16px;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius); backdrop-filter: blur(10px);
+        }
+        .param-group {
+            margin-bottom: 14px;
+        }
+        .param-group:last-child { margin-bottom: 0; }
+        .param-label {
+            font-size: 0.64rem; color: #aaa; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 6px;
+            font-weight: 600;
+        }
+        .param-label i { color: var(--purple); font-size: 0.55rem; }
+        .param-desc {
+            font-size: 0.54rem; color: #666; margin-right: 18px; margin-bottom: 6px;
+        }
+        .param-input, .param-select {
+            width: 100%; background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+            padding: 10px 14px; color: #fff; font-size: 0.72rem;
+            font-family: 'Vazirmatn', monospace; transition: 0.2s;
+        }
+        .param-input:focus, .param-select:focus {
+            outline: none; border-color: rgba(168,85,247,0.5);
+            box-shadow: 0 0 0 3px rgba(168,85,247,0.08);
+        }
+        .param-select { appearance: none; cursor: pointer; }
+        .param-select option { background: #1a1a1a; color: #fff; }
+        .param-hint {
+            font-size: 0.52rem; color: #555; margin-top: 4px;
+        }
+        .param-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+
+        /* ========== خروجی کامند ========== */
+        .output-section {
+            margin: 12px 16px; padding: 16px;
+            background: linear-gradient(135deg, rgba(168,85,247,0.06), rgba(139,92,246,0.03));
+            border: 1px solid rgba(168,85,247,0.25); border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+        }
+        .output-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .output-label {
+            font-size: 0.66rem; color: #aaa; font-weight: 700;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .output-label i { color: var(--purple); }
+        .copy-output-btn {
+            background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.3);
+            color: #a855f7; padding: 6px 12px; border-radius: 8px;
+            cursor: pointer; font-size: 0.62rem; font-family: inherit;
+            transition: 0.2s; display: flex; align-items: center; gap: 5px;
+            font-weight: 600;
+        }
+        .copy-output-btn:hover { background: rgba(168,85,247,0.25); }
+        .copy-output-btn.copied { background: rgba(46,204,113,0.2); border-color: rgba(46,204,113,0.4); color: #2ecc71; }
+        .output-box {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 14px; font-family: 'Courier New', monospace;
+            font-size: 0.72rem; color: #e0e0e0; word-break: break-all;
+            direction: ltr; text-align: left; line-height: 1.8;
+            min-height: 44px;
+        }
+        .output-box .slash { color: #a855f7; font-weight: bold; }
+        .output-box .cmd-name { color: #f1c40f; }
+
+        /* ========== ترجمه و توضیح ========== */
+        .translate-section {
+            margin: 8px 16px 20px; padding: 16px;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+        }
+        .translate-header {
+            font-size: 0.68rem; font-weight: 700; color: #fff;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+        }
+        .translate-header i { color: var(--blue); }
+        .translate-text {
+            font-size: 0.7rem; color: #bbb; line-height: 2;
+            padding: 10px; background: rgba(0,0,0,0.3);
+            border-radius: 8px; border-right: 3px solid var(--purple);
+        }
+
+        /* ========== Toast ========== */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(24,24,32,0.95); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 14px;
+            padding: 12px 20px; z-index: 700; display: flex; align-items: center;
+            gap: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+            animation: toastIn 0.4s ease; font-size: 0.72rem; color: #fff; font-weight: 600;
+        }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(40px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(-50%) translateY(0); } to { opacity: 0; transform: translateX(-50%) translateY(30px); } }
+        .toast i { color: #2ecc71; }
+
+        @media (min-width: 600px) {
+            .params-section, .output-section, .translate-section { max-width: 600px; margin-left: auto; margin-right: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+        <div class="header-title"><i class="fa-solid fa-terminal"></i> کامند جنریتور بدراک</div>
+        <div style="width:34px;"></div>
+    </header>
+
+    <!-- انتخاب کامند -->
+    <div class="command-selector">
+        <div class="selector-label"><i class="fa-solid fa-list"></i> انتخاب کامند:</div>
+        <div class="command-list" id="commandList"></div>
+    </div>
+
+    <!-- پارامترها -->
+    <div class="params-section" id="paramsSection"></div>
+
+    <!-- خروجی -->
+    <div class="output-section">
+        <div class="output-header">
+            <span class="output-label"><i class="fa-solid fa-code"></i> کامند ساخته شده:</span>
+            <button class="copy-output-btn" id="copyOutputBtn" onclick="copyOutput()">
+                <i class="fa-solid fa-copy"></i> کپی کامند
+            </button>
+        </div>
+        <div class="output-box" id="outputBox"><span class="slash">/</span></div>
+    </div>
+
+    <!-- ترجمه -->
+    <div class="translate-section">
+        <div class="translate-header"><i class="fa-solid fa-language"></i> ترجمه و توضیح:</div>
+        <div class="translate-text" id="translateText">یک کامند را انتخاب کنید...</div>
+    </div>
+
+    <div class="toast" id="toast" style="display:none;"></div>
+
+    <script>
+        const commands = [
+            {
+                id: 'give',
+                name: '/give',
+                icon: 'give',
+                desc: 'دادن آیتم به پلیر',
+                params: [
+                    { key: 'player', label: '👤 نام پلیر', desc: 'پلیری که آیتم رو دریافت می‌کنه', type: 'text', default: '@p', hint: '@p = نزدیک‌ترین | @s = خودت | @a = همه | @r = تصادفی' },
+                    { key: 'item', label: '📦 آیتم', desc: 'شناسه آیتم مورد نظر', type: 'text', default: 'diamond', hint: 'مثال: diamond_sword, stone, dirt, golden_apple' },
+                    { key: 'amount', label: '🔢 تعداد', desc: 'چه تعداد از این آیتم', type: 'number', default: '1', hint: 'حداکثر ۶۴ برای اکثر آیتم‌ها' },
+                    { key: 'data', label: '📊 دیتا (اختیاری)', desc: 'مقدار دیتای آیتم', type: 'number', default: '0', hint: 'برای آیتم‌های خاص مثل پشم رنگی یا چوب' },
+                ],
+                translate: (p) => `به پلیر <strong>"${p.player}"</strong> تعداد <strong>${p.amount}</strong> عدد <strong>${p.item}</strong> داده می‌شود.${parseInt(p.data) > 0 ? ' با دیتای ' + p.data : ''}`,
+                build: (p) => `/give ${p.player} ${p.item} ${p.amount} ${p.data}`,
+            },
+            {
+                id: 'tp',
+                name: '/tp',
+                icon: 'tp',
+                desc: 'تله‌پورت کردن',
+                params: [
+                    { key: 'player', label: '👤 نام پلیر', desc: 'پلیری که تله‌پورت میشه', type: 'text', default: '@p' },
+                    { key: 'x', label: '📍 مختصات X', desc: 'شرق (+) / غرب (-)', type: 'number', default: '0', hint: '~ یعنی موقعیت فعلی' },
+                    { key: 'y', label: '📍 مختصات Y', desc: 'ارتفاع', type: 'number', default: '64', hint: 'سطح دریا = 62' },
+                    { key: 'z', label: '📍 مختصات Z', desc: 'جنوب (+) / شمال (-)', type: 'number', default: '0' },
+                ],
+                translate: (p) => `پلیر <strong>"${p.player}"</strong> به مختصات <strong>X=${p.x}</strong>, <strong>Y=${p.y}</strong>, <strong>Z=${p.z}</strong> تله‌پورت می‌شود.`,
+                build: (p) => `/tp ${p.player} ${p.x} ${p.y} ${p.z}`,
+            },
+            {
+                id: 'gamemode',
+                name: '/gamemode',
+                icon: 'gm',
+                desc: 'تغییر حالت بازی',
+                params: [
+                    { key: 'mode', label: '🎮 حالت بازی', desc: 'گیم‌مود مورد نظر', type: 'select', options: {'survival':'بقا (Survival)','creative':'خلاق (Creative)','adventure':'ماجراجویی (Adventure)','spectator':'تماشاگر (Spectator)'}, default: 'creative' },
+                    { key: 'player', label: '👤 نام پلیر', desc: 'پلیر هدف', type: 'text', default: '@p', hint: 'خالی بذارید = خودتان' },
+                ],
+                translate: (p) => `حالت بازی پلیر <strong>"${p.player || 'خودتان'}"</strong> به <strong>${commands[2].params[0].options[p.mode]}</strong> تغییر می‌کند.`,
+                build: (p) => p.player ? `/gamemode ${p.mode} ${p.player}` : `/gamemode ${p.mode}`,
+            },
+            {
+                id: 'effect',
+                name: '/effect',
+                icon: 'effect',
+                desc: 'دادن افکت به پلیر',
+                params: [
+                    { key: 'player', label: '👤 نام پلیر', desc: 'پلیر هدف', type: 'text', default: '@p' },
+                    { key: 'effect', label: '✨ نوع افکت', desc: 'افکت مورد نظر', type: 'select', options: {
+                        'speed':'سرعت (Speed)','slowness':'کندی (Slowness)','haste':'شتاب (Haste)',
+                        'strength':'قدرت (Strength)','jump_boost':'پرش (Jump Boost)','regeneration':'بازسازی (Regeneration)',
+                        'invisibility':'نامرئی (Invisibility)','night_vision':'دید شب (Night Vision)',
+                        'weakness':'ضعف (Weakness)','poison':'سم (Poison)','wither':'ویزر (Wither)',
+                        'fire_resistance':'مقاومت آتش','water_breathing':'تنفس زیر آب',
+                        'levitation':'شناوری (Levitation)','slow_falling':'سقوط آرام'
+                    }, default: 'speed' },
+                    { key: 'duration', label: '⏱️ مدت (ثانیه)', desc: 'مدت زمان افکت', type: 'number', default: '30', hint: '999999 = تقریباً بی‌نهایت' },
+                    { key: 'amplifier', label: '📈 قدرت', desc: 'سطح افکت (۰ = سطح ۱)', type: 'number', default: '1', hint: '۰ = سطح ۱ | ۱ = سطح ۲ | ۲۵۵ = حداکثر' },
+                ],
+                translate: (p) => `به پلیر <strong>"${p.player}"</strong> افکت <strong>${commands[3].params[1].options[p.effect]}</strong> با قدرت <strong>${parseInt(p.amplifier)+1}</strong> به مدت <strong>${p.duration}</strong> ثانیه داده می‌شود.`,
+                build: (p) => `/effect ${p.player} ${p.effect} ${p.duration} ${p.amplifier}`,
+            },
+            {
+                id: 'summon',
+                name: '/summon',
+                icon: 'summon',
+                desc: 'احضار موجودات',
+                params: [
+                    { key: 'entity', label: '🧟 موجود', desc: 'موجودی که احضار میشه', type: 'select', options: {
+                        'zombie':'زامبی','skeleton':'اسکلت','creeper':'کریپر','spider':'عنکبوت',
+                        'enderman':'اندرمن','villager':'روستایی','cow':'گاو','pig':'خوک',
+                        'sheep':'گوسفند','horse':'اسب','wolf':'گرگ','cat':'گربه',
+                        'chicken':'مرغ','iron_golem':'گولم آهنی','witch':'جادوگر',
+                        'slime':'اسلایم','zombie_pigman':'پیگمن زامبی','wither_skeleton':'اسکلت ویزر'
+                    }, default: 'zombie' },
+                    { key: 'x', label: '📍 X', desc: 'مختصات شرق/غرب', type: 'text', default: '~', hint: '~ = موقعیت فعلی | ~5 = ۵ بلاک جلوتر' },
+                    { key: 'y', label: '📍 Y', desc: 'ارتفاع', type: 'text', default: '~' },
+                    { key: 'z', label: '📍 Z', desc: 'مختصات شمال/جنوب', type: 'text', default: '~' },
+                ],
+                translate: (p) => `موجود <strong>${commands[4].params[0].options[p.entity]}</strong> در مختصات <strong>${p.x} ${p.y} ${p.z}</strong> احضار می‌شود.`,
+                build: (p) => `/summon ${p.entity} ${p.x} ${p.y} ${p.z}`,
+            },
+            {
+                id: 'time',
+                name: '/time set',
+                icon: 'time',
+                desc: 'تنظیم زمان بازی',
+                params: [
+                    { key: 'time', label: '🕐 زمان', desc: 'زمان مورد نظر', type: 'select', options: {
+                        'day':'☀️ روز (1000)','noon':'🌞 ظهر (6000)','sunset':'🌅 غروب (12000)',
+                        'night':'🌙 شب (18000)','midnight':'🌑 نیمه شب (21000)'
+                    }, default: 'day' },
+                ],
+                translate: (p) => `زمان بازی به <strong>${commands[5].params[0].options[p.time]}</strong> تغییر می‌کند.`,
+                build: (p) => {
+                    const times = {day:'1000',noon:'6000',sunset:'12000',night:'18000',midnight:'21000'};
+                    return `/time set ${times[p.time] || '1000'}`;
+                },
+            },
+            {
+                id: 'weather',
+                name: '/weather',
+                icon: 'world',
+                desc: 'تغییر آب و هوا',
+                params: [
+                    { key: 'type', label: '🌤️ نوع آب و هوا', desc: '', type: 'select', options: {'clear':'☀️ صاف','rain':'🌧️ بارانی','thunder':'⛈️ طوفانی'}, default: 'clear' },
+                    { key: 'duration', label: '⏱️ مدت (ثانیه)', desc: 'مدت زمان (اختیاری)', type: 'number', default: '600', hint: 'پیش‌فرض: بین ۵ تا ۱۰ دقیقه تصادفی' },
+                ],
+                translate: (p) => `آب و هوای جهان به <strong>"${p.type === 'clear' ? 'صاف' : p.type === 'rain' ? 'بارانی' : 'طوفانی'}"</strong> به مدت <strong>${p.duration}</strong> ثانیه تغییر می‌کند.`,
+                build: (p) => `/weather ${p.type} ${p.duration}`,
+            },
+            {
+                id: 'kill',
+                name: '/kill',
+                icon: 'other',
+                desc: 'کشتن موجود/پلیر',
+                params: [
+                    { key: 'target', label: '🎯 هدف', desc: 'چه کسی کشته بشه', type: 'text', default: '@p', hint: '@e = همه موجودات | @a = همه پلیرها | @s = خودت' },
+                ],
+                translate: (p) => `هدف <strong>"${p.target}"</strong> کشته می‌شود.`,
+                build: (p) => `/kill ${p.target}`,
+            },
+            {
+                id: 'fill',
+                name: '/fill',
+                icon: 'other',
+                desc: 'پر کردن منطقه با بلاک',
+                params: [
+                    { key: 'x1', label: '📍 از X', desc: 'مختصات شروع', type: 'text', default: '~' },
+                    { key: 'y1', label: '📍 از Y', type: 'text', default: '~' },
+                    { key: 'z1', label: '📍 از Z', type: 'text', default: '~' },
+                    { key: 'x2', label: '📍 تا X', desc: 'مختصات پایان', type: 'text', default: '~10' },
+                    { key: 'y2', label: '📍 تا Y', type: 'text', default: '~10' },
+                    { key: 'z2', label: '📍 تا Z', type: 'text', default: '~10' },
+                    { key: 'block', label: '🧱 بلاک', desc: 'نوع بلاک', type: 'text', default: 'stone', hint: 'مثال: dirt, stone, air, grass, bedrock' },
+                ],
+                translate: (p) => `منطقه از (${p.x1},${p.y1},${p.z1}) تا (${p.x2},${p.y2},${p.z2}) با بلاک <strong>${p.block}</strong> پر می‌شود.`,
+                build: (p) => `/fill ${p.x1} ${p.y1} ${p.z1} ${p.x2} ${p.y2} ${p.z2} ${p.block}`,
+            },
+            {
+                id: 'setworldspawn',
+                name: '/setworldspawn',
+                icon: 'world',
+                desc: 'تنظیم اسپان جهان',
+                params: [
+                    { key: 'x', label: '📍 X', desc: 'مختصات (اختیاری)', type: 'text', default: '~', hint: 'خالی بذارید = موقعیت فعلی' },
+                    { key: 'y', label: '📍 Y', type: 'text', default: '~' },
+                    { key: 'z', label: '📍 Z', type: 'text', default: '~' },
+                ],
+                translate: (p) => `نقطه اسپان اصلی جهان در مختصات <strong>(${p.x}, ${p.y}, ${p.z})</strong> تنظیم می‌شود.`,
+                build: (p) => `/setworldspawn ${p.x} ${p.y} ${p.z}`,
+            },
+            {
+                id: 'difficulty',
+                name: '/difficulty',
+                icon: 'other',
+                desc: 'تنظیم سختی بازی',
+                params: [
+                    { key: 'level', label: '📊 سطح سختی', desc: '', type: 'select', options: {'peaceful':'☮️ صلح‌آمیز (Peaceful)','easy':'😊 آسان (Easy)','normal':'😐 معمولی (Normal)','hard':'😈 سخت (Hard)'}, default: 'normal' },
+                ],
+                translate: (p) => `سختی بازی به <strong>${commands[10].params[0].options[p.level]}</strong> تغییر می‌کند.`,
+                build: (p) => `/difficulty ${p.level}`,
+            },
+            {
+                id: 'enchant',
+                name: '/enchant',
+                icon: 'effect',
+                desc: 'افسون کردن آیتم',
+                params: [
+                    { key: 'player', label: '👤 پلیر', desc: 'پلیر هدف', type: 'text', default: '@p' },
+                    { key: 'enchantment', label: '✨ افسون', desc: 'نوع افسون', type: 'select', options: {
+                        'sharpness':'تیزی (Sharpness)','protection':'محافظت (Protection)',
+                        'efficiency':'کارایی (Efficiency)','unbreaking':'تخریب‌ناپذیری (Unbreaking)',
+                        'fortune':'ثروت (Fortune)','silk_touch':'لمس ابریشمی (Silk Touch)',
+                        'mending':'ترمیم (Mending)','power':'قدرت (Power)','punch':'مشت (Punch)',
+                        'flame':'شعله (Flame)','infinity':'بی‌نهایت (Infinity)',
+                        'looting':'غارت (Looting)','fire_aspect':'جنبه آتش (Fire Aspect)',
+                        'knockback':'پرتاب (Knockback)','depth_strider':'راه‌روی عمیق',
+                        'feather_falling':'سبکبالی (Feather Falling)','thorns':'خار (Thorns)'
+                    }, default: 'sharpness' },
+                    { key: 'level', label: '📈 سطح', desc: 'سطح افسون', type: 'number', default: '1', hint: 'حداکثر بستگی به نوع افسون دارد' },
+                ],
+                translate: (p) => `پلیر <strong>"${p.player}"</strong> افسون <strong>${commands[11].params[1].options[p.enchantment]}</strong> سطح <strong>${p.level}</strong> دریافت می‌کند (باید آیتم در دست باشد).`,
+                build: (p) => `/enchant ${p.player} ${p.enchantment} ${p.level}`,
+            },
+        ];
+
+        let currentCommand = commands[0];
+        let formValues = {};
+
+        function init() {
+            renderCommandList();
+            selectCommand(commands[0]);
+        }
+
+        function renderCommandList() {
+            const container = document.getElementById('commandList');
+            container.innerHTML = commands.map(c => {
+                let iconHTML = '';
+                if (c.icon === 'give') iconHTML = '<i class="fa-solid fa-gift"></i>';
+                else if (c.icon === 'tp') iconHTML = '<i class="fa-solid fa-location-arrow"></i>';
+                else if (c.icon === 'gm') iconHTML = '<i class="fa-solid fa-gamepad"></i>';
+                else if (c.icon === 'effect') iconHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i>';
+                else if (c.icon === 'summon') iconHTML = '<i class="fa-solid fa-skull"></i>';
+                else if (c.icon === 'time') iconHTML = '<i class="fa-solid fa-clock"></i>';
+                else if (c.icon === 'world') iconHTML = '<i class="fa-solid fa-globe"></i>';
+                else iconHTML = '<i class="fa-solid fa-code"></i>';
+                
+                return `<button class="cmd-chip" data-cmd="${c.id}" onclick="selectCommandById('${c.id}')">
+                    <span class="chip-icon ${c.icon}">${iconHTML}</span>
+                    ${c.name}
+                </button>`;
+            }).join('');
+        }
+
+        function selectCommandById(id) {
+            const cmd = commands.find(c => c.id === id);
+            if (cmd) selectCommand(cmd);
+        }
+
+        function selectCommand(cmd) {
+            currentCommand = cmd;
+            formValues = {};
+            cmd.params.forEach(p => { formValues[p.key] = p.default; });
+
+            document.querySelectorAll('.cmd-chip').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.cmd-chip[data-cmd="${cmd.id}"]`)?.classList.add('active');
+
+            renderParams();
+            updateOutput();
+        }
+
+        function renderParams() {
+            const container = document.getElementById('paramsSection');
+            container.innerHTML = `<div style="font-size:0.7rem;font-weight:700;color:#fff;margin-bottom:12px;">
+                <i class="fa-solid fa-sliders" style="color:var(--purple);margin-left:6px;"></i>
+                پارامترهای ${currentCommand.name}
+                <span style="font-size:0.56rem;color:#666;font-weight:400;margin-right:4px;">(${currentCommand.desc})</span>
+            </div>` + currentCommand.params.map(p => {
+                let inputHTML = '';
+                if (p.type === 'select') {
+                    inputHTML = `<select class="param-select" id="param_${p.key}" onchange="onParamChange('${p.key}', this.value)">
+                        ${Object.entries(p.options).map(([k,v]) => `<option value="${k}" ${formValues[p.key] === k ? 'selected' : ''}>${v}</option>`).join('')}
+                    </select>`;
+                } else if (p.type === 'number') {
+                    inputHTML = `<input type="number" class="param-input" id="param_${p.key}" value="${formValues[p.key] || ''}" oninput="onParamChange('${p.key}', this.value)" placeholder="${p.default}">`;
+                } else {
+                    inputHTML = `<input type="text" class="param-input" id="param_${p.key}" value="${formValues[p.key] || ''}" oninput="onParamChange('${p.key}', this.value)" placeholder="${p.default}">`;
+                }
+                
+                return `
+                <div class="param-group">
+                    <div class="param-label"><i class="fa-solid fa-circle"></i> ${p.label}</div>
+                    ${p.desc ? `<div class="param-desc">${p.desc}</div>` : ''}
+                    ${inputHTML}
+                    ${p.hint ? `<div class="param-hint">💡 ${p.hint}</div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function onParamChange(key, value) {
+            formValues[key] = value;
+            updateOutput();
+        }
+
+        function updateOutput() {
+            const cmd = currentCommand;
+            try {
+                const output = cmd.build(formValues);
+                document.getElementById('outputBox').innerHTML = output
+                    .replace(/^\//, '<span class="slash">/</span> ')
+                    .replace(/^<span class="slash">\/<\/span> (\S+)/, '<span class="slash">/</span> <span class="cmd-name">$1</span>');
+                document.getElementById('translateText').innerHTML = '📝 ' + cmd.translate(formValues);
+            } catch(e) {
+                document.getElementById('outputBox').innerHTML = '<span style="color:#e74c3c;">خطا در ساخت کامند - مقادیر را بررسی کنید</span>';
+            }
+        }
+
+        function copyOutput() {
+            const cmd = currentCommand;
+            const output = cmd.build(formValues);
+            navigator.clipboard.writeText(output).then(() => {
+                const btn = document.getElementById('copyOutputBtn');
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> کپی شد!';
+                showToast('✅ کامند با موفقیت کپی شد!');
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fa-solid fa-copy"></i> کپی کامند';
+                }, 2000);
+            }).catch(() => {
+                showToast('❌ خطا در کپی کامند');
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = msg;
+            toast.style.display = 'flex';
+            toast.style.animation = 'toastIn 0.4s ease';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => { toast.style.display = 'none'; }, 300);
+            }, 2500);
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#1a0a0a">
+    <title>BlockForge | Clash of Clans - بیس‌های آماده</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0a0606; --bg2: #120a0a; --bg3: #1a0e0e; --bg4: #221212;
+            --gold: #f0c040; --gold-hover: #f5d060; --gold-dark: #c8963e;
+            --red: #e74c3c; --red-hover: #ff6b6b; --red-dark: #8b1a1a;
+            --text: #e8e0d8; --text2: #b0a090; --text3: #706050;
+            --border: #2a1515; --border-light: #3a2020;
+            --radius-sm: 10px; --radius: 14px; --radius-lg: 20px;
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --th4: #8bc34a; --th5: #4caf50; --th6: #009688; --th7: #00bcd4;
+            --th8: #2196f3; --th9: #3f51b5; --th10: #9c27b0; --th11: #e91e63;
+            --th12: #f44336; --th13: #ff9800; --th14: #ffc107; --th15: #607d8b;
+            --th16: #795548; --th17: #212121;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; font-size: 15px; }
+
+        body.loading { overflow: hidden; position: fixed; width: 100%; height: 100%; }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: calc(70px + var(--safe-bottom));
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(240,192,64,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(231,76,60,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 60%, rgba(240,192,64,0.04) 0%, transparent 40%);
+        }
+
+        /* ==================== لودینگ ==================== */
+        .loading-overlay {
+            position: fixed; inset: 0; background: #0a0606; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loading-shield {
+            font-size: 4rem; margin-bottom: 15px;
+            animation: shieldBounce 1s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(240,192,64,0.5));
+        }
+        @keyframes shieldBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.1); }
+        }
+        .loading-text { color: #888; font-size: 0.85rem; font-weight: 500; }
+
+        #app { opacity: 0; transition: opacity 0.4s ease; }
+        #app.visible { opacity: 1; }
+
+        /* ==================== هدر ==================== */
+        .header {
+            background: rgba(10,6,6,0.95);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-bottom: 2px solid var(--border);
+            position: sticky; top: 0; z-index: 1000;
+            padding: 10px 16px;
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-img {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, #f0c040, #8b6914);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; color: #1a0a0a; font-weight: 900;
+            box-shadow: 0 4px 20px rgba(240,192,64,0.4);
+            border: 2px solid #e0a820;
+        }
+        .logo-text { font-weight: 900; font-size: 1.2rem; color: #f0c040; }
+        .logo-text span { color: #fff; }
+        .game-badge {
+            font-size: 0.65rem;
+            background: linear-gradient(135deg, #e74c3c, #8b1a1a);
+            color: #fff; padding: 4px 10px; border-radius: 12px;
+            font-weight: 700; letter-spacing: 0.5px;
+            border: 1px solid #ff6b6b;
+        }
+        .header-actions { display: flex; gap: 6px; align-items: center; }
+        .btn-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--bg4); border: 1px solid var(--border-light);
+            color: #c0a060; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            font-size: 1.1rem; transition: 0.2s; flex-shrink: 0; text-decoration: none;
+        }
+        .btn-icon:active { background: var(--gold); color: #1a0a0a; border-color: var(--gold); }
+
+        /* ==================== بنر ==================== */
+        .hero-banner {
+            margin: 14px 16px;
+            background: linear-gradient(135deg, #1a0e0e 0%, #2a1515 100%);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 70%, rgba(240,192,64,0.08) 0%, transparent 50%);
+        }
+        .hero-banner .hero-icon {
+            font-size: 3rem; margin-bottom: 10px;
+            position: relative; z-index: 1;
+        }
+        .hero-banner h2 {
+            font-size: 1.3rem; font-weight: 900; color: #f0c040;
+            margin-bottom: 4px; position: relative; z-index: 1;
+        }
+        .hero-banner p {
+            font-size: 0.8rem; color: #b0a090;
+            position: relative; z-index: 1;
+        }
+
+        /* ==================== انتخاب تاون هال ==================== */
+        .th-section {
+            padding: 0 16px; margin-bottom: 14px;
+        }
+        .th-section h3 {
+            font-size: 1rem; font-weight: 800; color: #f0c040;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+        }
+        .th-section h3 i { color: #e74c3c; }
+        .th-scroll {
+            display: flex; gap: 10px; overflow-x: auto;
+            padding-bottom: 6px; scrollbar-width: none;
+        }
+        .th-scroll::-webkit-scrollbar { display: none; }
+        .th-btn {
+            min-width: 60px; height: 60px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border-light);
+            background: var(--bg3);
+            color: var(--text2);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 2px; font-family: inherit;
+            flex-shrink: 0; position: relative;
+            overflow: hidden;
+        }
+        .th-btn::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            transition: 0.3s;
+        }
+        .th-btn.th4::before { background: var(--th4); }
+        .th-btn.th5::before { background: var(--th5); }
+        .th-btn.th6::before { background: var(--th6); }
+        .th-btn.th7::before { background: var(--th7); }
+        .th-btn.th8::before { background: var(--th8); }
+        .th-btn.th9::before { background: var(--th9); }
+        .th-btn.th10::before { background: var(--th10); }
+        .th-btn.th11::before { background: var(--th11); }
+        .th-btn.th12::before { background: var(--th12); }
+        .th-btn.th13::before { background: var(--th13); }
+        .th-btn.th14::before { background: var(--th14); }
+        .th-btn.th15::before { background: var(--th15); }
+        .th-btn.th16::before { background: var(--th16); }
+        .th-btn.th17::before { background: var(--th17); }
+
+        .th-btn:hover, .th-btn.active {
+            border-color: #f0c040;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            color: #fff;
+        }
+        .th-btn.active {
+            background: linear-gradient(135deg, #2a1515, #3a1a1a);
+            border-color: #f0c040;
+        }
+        .th-btn .th-number { font-size: 1.2rem; font-weight: 900; }
+        .th-btn .th-label { font-size: 0.6rem; color: #888; }
+        .th-btn.active .th-label { color: #f0c040; }
+
+        /* ==================== تب‌های نوع بیس ==================== */
+        .type-tabs {
+            padding: 0 16px; margin-bottom: 14px;
+            display: flex; gap: 8px; overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .type-tabs::-webkit-scrollbar { display: none; }
+        .type-tab {
+            padding: 8px 18px; border-radius: 25px;
+            background: var(--bg3); border: 1px solid var(--border-light);
+            color: var(--text2); cursor: pointer;
+            font-weight: 600; font-size: 0.78rem; white-space: nowrap;
+            transition: 0.3s; font-family: inherit; flex-shrink: 0;
+        }
+        .type-tab:hover { border-color: #666; color: #fff; }
+        .type-tab.active {
+            background: var(--gold); color: #1a0a0a;
+            border-color: var(--gold); font-weight: 800;
+            box-shadow: 0 4px 15px rgba(240,192,64,0.3);
+        }
+
+        /* ==================== گرید بیس‌ها ==================== */
+        .bases-grid {
+            padding: 0 16px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 12px;
+        }
+        .base-card {
+            background: var(--bg3);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .base-card:hover {
+            border-color: #f0c040;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+        }
+        .base-card:active { transform: scale(0.97); }
+        .base-card-img {
+            height: 130px; background-size: cover;
+            background-position: center; position: relative;
+        }
+        .base-card-img .th-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(0,0,0,0.85); color: #f0c040;
+            padding: 4px 10px; border-radius: 10px;
+            font-weight: 800; font-size: 0.7rem;
+            border: 1px solid #f0c040;
+        }
+        .base-card-img .type-badge {
+            position: absolute; bottom: 10px; left: 10px;
+            background: rgba(0,0,0,0.8); color: #fff;
+            padding: 3px 8px; border-radius: 8px;
+            font-size: 0.65rem;
+        }
+        .type-badge.war { background: #e74c3c; }
+        .type-badge.farm { background: #2ecc71; color: #000; }
+        .type-badge.hybrid { background: #f39c12; color: #000; }
+        .type-badge.trophy { background: #9b59b6; }
+
+        .base-card-body { padding: 12px; }
+        .base-card-body h4 {
+            font-size: 0.85rem; color: #fff; font-weight: 700;
+            margin-bottom: 2px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .base-card-body .author {
+            font-size: 0.68rem; color: var(--text3); margin-bottom: 8px;
+        }
+        .base-card-body .stats {
+            display: flex; justify-content: space-between;
+            font-size: 0.65rem; color: #888;
+        }
+        .base-card-body .stats i { color: #f0c040; }
+
+        /* ==================== مودال ==================== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 4000;
+            display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal {
+            background: #1a0e0e; border-radius: 20px 20px 0 0; width: 100%;
+            max-height: 85vh; overflow-y: auto; padding: 20px 16px;
+            transform: translateY(100%); transition: 0.4s ease;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+            border: 2px solid var(--border-light); border-bottom: none;
+        }
+        .modal-overlay.active .modal { transform: translateY(0); }
+        .modal-handle {
+            width: 40px; height: 5px; background: #3a2020;
+            border-radius: 5px; margin: 0 auto 18px;
+        }
+        .modal-close {
+            position: absolute; top: 18px; right: 18px;
+            width: 34px; height: 34px; border-radius: 50%;
+            background: #2a1515; border: 1px solid #3a2020;
+            color: #fff; font-size: 1rem; cursor: pointer; z-index: 1;
+        }
+        .modal img {
+            width: 100%; height: 200px; object-fit: cover;
+            border-radius: var(--radius-sm); margin-bottom: 14px;
+            border: 2px solid var(--border-light);
+        }
+        .modal .th-label {
+            display: inline-block;
+            background: rgba(240,192,64,0.2);
+            color: #f0c040;
+            padding: 4px 14px; border-radius: 15px;
+            font-weight: 800; font-size: 0.8rem;
+            border: 1px solid rgba(240,192,64,0.3);
+            margin-bottom: 8px;
+        }
+        .modal h3 { font-size: 1.3rem; margin-bottom: 6px; font-weight: 800; color: #fff; }
+        .modal .meta-info {
+            display: flex; gap: 12px; flex-wrap: wrap;
+            color: #b0a090; font-size: 0.78rem; margin-bottom: 12px;
+        }
+        .modal .desc-text { color: #c0b0a0; line-height: 2; font-size: 0.85rem; margin-bottom: 12px; }
+        .modal .download-box {
+            background: #0d0707; border: 2px solid var(--border-light);
+            border-radius: var(--radius-sm); padding: 16px; margin-top: 10px;
+        }
+        .modal .download-box .dl-title {
+            font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px; color: #f0c040;
+        }
+        .modal .dl-link-row {
+            display: flex; align-items: center; gap: 10px;
+            background: #0a0505; border: 1px solid #3a2020;
+            border-radius: 10px; padding: 10px 14px;
+        }
+        .modal .file-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+            background: #2a1515; color: #f0c040;
+        }
+        .modal .dl-link-row .file-info { flex: 1; min-width: 0; }
+        .modal .dl-link-row .file-name {
+            font-size: 0.8rem; font-weight: 600; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .modal .dl-link-row .file-size { font-size: 0.7rem; color: #888; }
+        .modal .btn-download {
+            background: linear-gradient(135deg, #f0c040, #c8963e);
+            color: #1a0a0a; border: none;
+            padding: 10px 18px; border-radius: 10px; font-weight: 800;
+            cursor: pointer; font-size: 0.8rem; font-family: inherit;
+            text-decoration: none; white-space: nowrap;
+            display: flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .modal .btn-download:hover { background: #f5d060; }
+
+        /* ==================== فوتر ==================== */
+        .footer {
+            background: #080404; border-top: 2px solid #1a0e0e;
+            padding: 18px 16px; text-align: center;
+            color: #555; font-size: 0.7rem; line-height: 2.2;
+        }
+
+        /* ==================== ناوبری پایین ==================== */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(10,6,6,0.97); backdrop-filter: blur(30px);
+            border-top: 2px solid var(--border);
+            display: flex; justify-content: space-around;
+            padding: 8px 0 calc(8px + var(--safe-bottom)); z-index: 500;
+        }
+        .bottom-nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            color: #666; cursor: pointer; transition: 0.2s; background: none;
+            border: none; font-size: 0.65rem; padding: 6px 10px;
+            font-family: inherit; text-decoration: none;
+        }
+        .bottom-nav-item i { font-size: 1.3rem; }
+        .bottom-nav-item.active { color: #f0c040; }
+
+        /* ==================== Toast ==================== */
+        .toast {
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: #1a0e0e; color: #f0c040; padding: 12px 24px;
+            border-radius: 30px; z-index: 6000; font-weight: 700; font-size: 0.85rem;
+            border: 2px solid #3a2020; animation: fadeUp 0.3s ease; white-space: nowrap;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(15px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @media (min-width: 768px) {
+            .bases-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        }
+    </style>
+</head>
+<body class="loading">
+
+    <!-- لودینگ -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-shield">🛡️</div>
+        <div class="loading-text">در حال بارگذاری...</div>
+    </div>
+
+    <!-- اپ -->
+    <div id="app">
+        <!-- هدر -->
+        <header class="header">
+            <div class="logo-area" onclick="location.reload()">
+                <div class="logo-img"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="logo-text"><span>Clash</span>Base</div>
+                <span class="game-badge">COC</span>
+            </div>
+            <div class="header-actions">
+                <a href="../index.html" class="btn-icon" title="تغییر بازی"><i class="fa-solid fa-gamepad"></i></a>
+            </div>
+        </header>
+
+        <!-- بنر -->
+        <div class="hero-banner">
+            <div class="hero-icon">🏰</div>
+            <h2>بهترین بیس‌های کلش آف کلنز</h2>
+            <p>از تاون هال ۴ تا ۱۷ | وار، فارم، هایبرید و تروفی</p>
+        </div>
+
+        <!-- انتخاب تاون هال -->
+        <div class="th-section">
+            <h3><i class="fa-solid fa-chess-rook"></i> انتخاب تاون هال</h3>
+            <div class="th-scroll" id="thScroll">
+                <button class="th-btn th4 active" data-th="4"><span class="th-number">۴</span><span class="th-label">TH4</span></button>
+                <button class="th-btn th5" data-th="5"><span class="th-number">۵</span><span class="th-label">TH5</span></button>
+                <button class="th-btn th6" data-th="6"><span class="th-number">۶</span><span class="th-label">TH6</span></button>
+                <button class="th-btn th7" data-th="7"><span class="th-number">۷</span><span class="th-label">TH7</span></button>
+                <button class="th-btn th8" data-th="8"><span class="th-number">۸</span><span class="th-label">TH8</span></button>
+                <button class="th-btn th9" data-th="9"><span class="th-number">۹</span><span class="th-label">TH9</span></button>
+                <button class="th-btn th10" data-th="10"><span class="th-number">۱۰</span><span class="th-label">TH10</span></button>
+                <button class="th-btn th11" data-th="11"><span class="th-number">۱۱</span><span class="th-label">TH11</span></button>
+                <button class="th-btn th12" data-th="12"><span class="th-number">۱۲</span><span class="th-label">TH12</span></button>
+                <button class="th-btn th13" data-th="13"><span class="th-number">۱۳</span><span class="th-label">TH13</span></button>
+                <button class="th-btn th14" data-th="14"><span class="th-number">۱۴</span><span class="th-label">TH14</span></button>
+                <button class="th-btn th15" data-th="15"><span class="th-number">۱۵</span><span class="th-label">TH15</span></button>
+                <button class="th-btn th16" data-th="16"><span class="th-number">۱۶</span><span class="th-label">TH16</span></button>
+                <button class="th-btn th17" data-th="17"><span class="th-number">۱۷</span><span class="th-label">TH17</span></button>
+            </div>
+        </div>
+
+        <!-- تب‌های نوع بیس -->
+        <div class="type-tabs" id="typeTabs">
+            <button class="type-tab active" data-type="all">همه</button>
+            <button class="type-tab" data-type="war">⚔️ وار</button>
+            <button class="type-tab" data-type="farm">🌾 فارم</button>
+            <button class="type-tab" data-type="hybrid">🏛️ هایبرید</button>
+            <button class="type-tab" data-type="trophy">🏆 تروفی</button>
+        </div>
+
+        <!-- گرید بیس‌ها -->
+        <div class="bases-grid" id="basesGrid"></div>
+
+        <!-- فوتر -->
+        <footer class="footer">
+            <p>© 2026 <strong>ClashBase</strong> | 👤 mahdi x mine | 📅 ۱۴۰۴</p>
+            <p style="color:#333;">این سایت وابسته به Supercell نیست.</p>
+        </footer>
+
+        <!-- ناوبری پایین -->
+        <nav class="bottom-nav">
+            <button class="bottom-nav-item active" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+                <i class="fa-solid fa-house"></i> خانه
+            </button>
+            <a href="../index.html" class="bottom-nav-item">
+                <i class="fa-solid fa-gamepad"></i> بازی‌ها
+            </a>
+        </nav>
+
+        <!-- مودال -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="mods.js"></script>
+    <script>
+        let items = [];
+        let currentTH = '4';
+        let currentType = 'all';
+
+        function buildItems() {
+            if (typeof MY_CONTENT === 'undefined') return [];
+            return MY_CONTENT.map((item, index) => ({
+                id: index + 1,
+                ...item,
+                img: item.img || 'https://picsum.photos/seed/cocb' + (index + 1) + '/400/300',
+                th: item.th || '4',
+                type: item.type || 'war',
+            }));
+        }
+
+        function loadItems() { items = buildItems(); }
+
+        // لودینگ
+        function finishLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            const app = document.getElementById('app');
+            const body = document.body;
+            if (overlay.classList.contains('hidden')) return;
+            overlay.classList.add('hidden');
+            app.classList.add('visible');
+            body.classList.remove('loading');
+        }
+        setTimeout(finishLoading, 600);
+        window.addEventListener('load', () => setTimeout(finishLoading, 100));
+        setTimeout(finishLoading, 2000);
+
+        // ==================== کارت بیس ====================
+        function baseCardHTML(item) {
+            const typeLabels = { war: '⚔️ وار', farm: '🌾 فارم', hybrid: '🏛️ هایبرید', trophy: '🏆 تروفی' };
+            const typeClass = item.type || 'war';
+            return `
+                <div class="base-card" data-id="${item.id}">
+                    <div class="base-card-img" style="background-image:url('${item.img}');">
+                        <span class="th-badge">TH${item.th}</span>
+                        <span class="type-badge ${typeClass}">${typeLabels[item.type] || item.type}</span>
+                    </div>
+                    <div class="base-card-body">
+                        <h4>${item.title}</h4>
+                        <div class="author">${item.author}</div>
+                        <div class="stats">
+                            <span><i class="fa-solid fa-shield-halved"></i> TH${item.th}</span>
+                            <span>${typeLabels[item.type] || item.type}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function bindCards() {
+            document.querySelectorAll('.base-card').forEach(c => {
+                c.onclick = () => openModal(parseInt(c.dataset.id));
+            });
+        }
+
+        // ==================== فیلتر و رندر ====================
+        function getFiltered() {
+            return items.filter(i => {
+                const matchTH = currentTH === 'all' || i.th == currentTH;
+                const matchType = currentType === 'all' || i.type === currentType;
+                return matchTH && matchType;
+            });
+        }
+
+        function renderBases() {
+            const filtered = getFiltered();
+            const grid = document.getElementById('basesGrid');
+            grid.innerHTML = filtered.length === 0
+                ? `<div style="color:#666;padding:40px;text-align:center;grid-column:1/-1;">
+                    <i class="fa-solid fa-fort-awesome" style="font-size:3rem;display:block;margin-bottom:15px;color:#2a1515;"></i>
+                    بیسی برای این تاون هال یافت نشد!
+                   </div>`
+                : filtered.map(baseCardHTML).join('');
+            bindCards();
+        }
+
+        // ==================== انتخاب تاون هال ====================
+        document.getElementById('thScroll').addEventListener('click', function(e) {
+            const btn = e.target.closest('.th-btn');
+            if (!btn) return;
+            document.querySelectorAll('.th-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTH = btn.dataset.th;
+            btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            renderBases();
+        });
+
+        // ==================== انتخاب نوع بیس ====================
+        document.getElementById('typeTabs').addEventListener('click', function(e) {
+            const btn = e.target.closest('.type-tab');
+            if (!btn) return;
+            document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentType = btn.dataset.type;
+            renderBases();
+        });
+
+        // ==================== مودال ====================
+        function openModal(id) {
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+            const typeLabels = { war: '⚔️ وار', farm: '🌾 فارم', hybrid: '🏛️ هایبرید', trophy: '🏆 تروفی' };
+            document.getElementById('modalContent').innerHTML = `
+                <div class="modal-handle"></div>
+                <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('active')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <img src="${item.img}" alt="${item.title}">
+                <span class="th-label">🏰 تاون هال ${item.th}</span>
+                <h3>${item.title}</h3>
+                <div class="meta-info">
+                    <span><i class="fa-solid fa-user"></i> ${item.author}</span>
+                    <span><i class="fa-solid fa-tag"></i> ${typeLabels[item.type] || item.type}</span>
+                    <span><i class="fa-solid fa-chess-rook"></i> TH${item.th}</span>
+                </div>
+                <p class="desc-text">${item.desc || 'توضیحاتی برای این بیس ثبت نشده.'}</p>
+                ${item.downloadUrl ? `
+                <div class="download-box">
+                    <div class="dl-title"><i class="fa-solid fa-link"></i> لینک کپی بیس</div>
+                    <div class="dl-link-row">
+                        <div class="file-icon"><i class="fa-solid fa-copy"></i></div>
+                        <div class="file-info">
+                            <div class="file-name">${item.fileName || 'base-link.txt'}</div>
+                            <div class="file-size">کپی لینک بیس</div>
+                        </div>
+                        <a href="${item.downloadUrl}" class="btn-download" target="_blank">
+                            <i class="fa-solid fa-external-link-alt"></i> دریافت
+                        </a>
+                    </div>
+                </div>` : ''}
+            `;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+        document.getElementById('modalOverlay').onclick = function(e) {
+            if (e.target === this) this.classList.remove('active');
+        };
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') document.getElementById('modalOverlay').classList.remove('active');
+        });
+
+        // START
+        loadItems();
+        renderBases();
+    </script>
+</body>
+</html>

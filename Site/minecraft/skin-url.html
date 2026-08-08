@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>اسکین به URL | BlockForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060608; --glass: rgba(20,20,28,0.5);
+            --glass-border: rgba(255,255,255,0.06); --gold: #d4a54a;
+            --text: #e8e8e8; --text2: #a8a8a8; --pink: #e91e63;
+            --green: #2ecc71; --red: #e74c3c; --orange: #ff9800;
+            --radius: 14px; --safe-bottom: env(safe-area-inset-bottom, 16px);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        html { font-size:15px; }
+        body {
+            font-family:'Vazirmatn',sans-serif; background:var(--bg);
+            background-image: radial-gradient(ellipse at 30% 10%, rgba(233,30,99,0.03) 0%, transparent 60%);
+            color:var(--text); line-height:1.7; overflow-x:hidden;
+            -webkit-font-smoothing:antialiased; padding-bottom:calc(20px + var(--safe-bottom));
+        }
+        .header {
+            background:rgba(8,8,12,0.85); backdrop-filter:blur(30px);
+            border-bottom:1px solid var(--glass-border);
+            position:sticky; top:0; z-index:100; padding:8px 16px;
+            display:flex; align-items:center; justify-content:space-between;
+        }
+        .back-btn {
+            width:34px; height:34px; border-radius:50%; background:var(--glass);
+            border:1px solid var(--glass-border); color:#bbb; cursor:pointer;
+            font-size:0.85rem; display:flex; align-items:center; justify-content:center;
+            text-decoration:none; transition:0.2s;
+        }
+        .back-btn:hover { background:rgba(255,255,255,0.08); color:#fff; }
+        .header-title { font-weight:800; font-size:0.95rem; color:#fff; display:flex; align-items:center; gap:8px; }
+        .header-title i { color:var(--pink); }
+        .container { max-width:450px; margin:0 auto; padding:14px 16px; }
+
+        .card {
+            background:var(--glass); border:1px solid var(--glass-border);
+            border-radius:var(--radius); padding:24px 18px;
+            backdrop-filter:blur(10px); text-align:center;
+            position:relative; overflow:hidden;
+        }
+
+        /* ===== Progress Ring ===== */
+        .progress-ring-wrap {
+            position:relative; width:160px; height:160px;
+            margin:0 auto 16px; display:flex;
+            align-items:center; justify-content:center;
+        }
+        .progress-ring {
+            position:absolute; inset:0;
+            transform:rotate(-90deg);
+        }
+        .progress-ring .bg-circle {
+            fill:none; stroke:rgba(255,255,255,0.05);
+            stroke-width:4;
+        }
+        .progress-ring .fg-circle {
+            fill:none; stroke:var(--pink);
+            stroke-width:4; stroke-linecap:round;
+            stroke-dasharray:440; stroke-dashoffset:440;
+            transition:stroke-dashoffset 0.1s linear;
+            filter:drop-shadow(0 0 6px rgba(233,30,99,0.4));
+        }
+        .progress-ring .fg-circle.complete {
+            stroke:var(--green);
+            filter:drop-shadow(0 0 8px rgba(46,204,113,0.5));
+        }
+        
+        .ring-content {
+            position:relative; z-index:2; text-align:center;
+        }
+        .ring-icon {
+            font-size:2.2rem; display:block; margin-bottom:2px;
+            transition:all 0.3s;
+        }
+        .ring-icon.upload { color:#555; }
+        .ring-icon.processing { color:var(--pink); animation:pulse 1s infinite; }
+        .ring-icon.done { color:var(--green); }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+        
+        .ring-text {
+            font-size:0.65rem; font-weight:700;
+        }
+        .ring-text.idle { color:#888; }
+        .ring-text.processing { color:var(--pink); }
+        .ring-text.done { color:var(--green); }
+        .ring-percent {
+            font-size:0.8rem; font-weight:900;
+            margin-top:2px;
+        }
+        .ring-percent.idle { color:#555; }
+        .ring-percent.processing { color:var(--pink); }
+        .ring-percent.done { color:var(--green); }
+
+        /* ===== Upload Zone داخل Ring ===== */
+        .upload-trigger {
+            cursor:pointer; transition:all 0.2s;
+        }
+        .upload-trigger:hover { transform:scale(1.05); }
+        .upload-trigger input { display:none; }
+
+        /* ===== Result ===== */
+        .result-section {
+            display:none; animation:slideUp 0.4s ease;
+        }
+        @keyframes slideUp { from{opacity:0;transform:translateY(15px);} }
+        .preview-img-wrap {
+            display:inline-block; border-radius:10px; overflow:hidden;
+            border:3px solid rgba(233,30,99,0.25); margin-bottom:10px;
+        }
+        .preview-img {
+            width:100px; height:auto; display:block;
+            image-rendering:pixelated;
+        }
+        .url-box {
+            background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.06);
+            border-radius:10px; padding:10px; margin:8px 0;
+            font-family:'Courier New',monospace; font-size:0.45rem;
+            color:#999; word-break:break-all; direction:ltr; text-align:left;
+            max-height:45px; overflow:hidden; line-height:1.3;
+        }
+
+        .btn {
+            padding:10px 14px; border-radius:10px; font-weight:700;
+            cursor:pointer; font-size:0.62rem; font-family:inherit;
+            transition:all 0.2s; border:none;
+            display:inline-flex; align-items:center; gap:5px;
+        }
+        .btn-primary { background:linear-gradient(135deg,#e91e63,#c2185b); color:#fff; width:100%; justify-content:center; }
+        .btn-primary:hover { box-shadow:0 4px 15px rgba(233,30,99,0.3); }
+        .btn-outline { background:transparent; border:1px solid rgba(255,255,255,0.12); color:#aaa; width:100%; justify-content:center; margin-top:6px; }
+        .btn-copied { background:#2ecc71!important; color:#fff!important; }
+
+        .hidden { display:none!important; }
+        .toast {
+            position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+            background:rgba(24,24,32,0.95); backdrop-filter:blur(20px);
+            border:1px solid var(--glass-border); border-radius:14px;
+            padding:10px 18px; z-index:700; font-size:0.65rem;
+            color:#fff; font-weight:600; animation:tIn 0.3s ease;
+        }
+        @keyframes tIn { from{opacity:0;transform:translateX(-50%) translateY(20px);} }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+        <div class="header-title"><i class="fa-solid fa-user-astronaut"></i> اسکین به URL</div>
+        <div style="width:34px;"></div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <!-- Progress Ring -->
+            <div class="progress-ring-wrap" id="ringWrap">
+                <svg class="progress-ring" viewBox="0 0 150 150">
+                    <circle class="bg-circle" cx="75" cy="75" r="70"/>
+                    <circle class="fg-circle" id="fgCircle" cx="75" cy="75" r="70"/>
+                </svg>
+                
+                <div class="ring-content">
+                    <div class="upload-trigger" id="uploadTrigger" onclick="document.getElementById('skinInput').click()">
+                        <span class="ring-icon upload" id="ringIcon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+                        <div class="ring-text idle" id="ringText">کلیک کن</div>
+                        <div class="ring-percent idle" id="ringPercent">آپلود اسکین</div>
+                        <input type="file" id="skinInput" accept="image/png" onchange="startUpload(this.files[0])">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div class="result-section" id="resultSection">
+                <div class="preview-img-wrap">
+                    <img class="preview-img" id="previewImg" src="" alt="Skin">
+                </div>
+                <div style="font-size:0.6rem;color:var(--green);margin-bottom:4px;">✅ اسکین آپلود شد</div>
+                
+                <div class="url-box" id="urlBox"></div>
+                <div style="font-size:0.48rem;color:#666;margin-bottom:6px;" id="urlInfo"></div>
+
+                <button class="btn btn-primary" id="copyBtn" onclick="copyUrl()">
+                    <i class="fa-solid fa-copy"></i> کپی URL
+                </button>
+                <button class="btn btn-outline" onclick="downloadSkin()">
+                    <i class="fa-solid fa-download"></i> دانلود PNG
+                </button>
+                <button class="btn btn-outline" onclick="resetAll()">
+                    <i class="fa-solid fa-rotate-left"></i> آپلود جدید
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" style="display:none;"></div>
+
+    <script>
+        let currentDataUrl = '';
+        const CIRCUMFERENCE = 2 * Math.PI * 70; // ~440
+
+        function startUpload(file) {
+            if (!file) return;
+            if (file.type !== 'image/png') { toast('❌ فقط PNG!', '#e74c3c'); return; }
+            if (file.size > 5 * 1024 * 1024) { toast('❌ حداکثر 5MB!', '#e74c3c'); return; }
+
+            // Hide trigger, show processing
+            document.getElementById('uploadTrigger').style.pointerEvents = 'none';
+            document.getElementById('ringIcon').className = 'ring-icon processing';
+            document.getElementById('ringText').className = 'ring-text processing';
+            document.getElementById('ringText').textContent = 'در حال پردازش';
+            document.getElementById('ringPercent').className = 'ring-percent processing';
+            document.getElementById('ringPercent').textContent = '0%';
+
+            const reader = new FileReader();
+            const fgCircle = document.getElementById('fgCircle');
+            
+            // Animate progress ring (0% to 90% in 2 seconds)
+            const duration = 2000;
+            const startTime = Date.now();
+            let animFrame;
+
+            function animateProgress() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(90, (elapsed / duration) * 90);
+                
+                const offset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE;
+                fgCircle.style.strokeDashoffset = offset;
+                document.getElementById('ringPercent').textContent = Math.round(progress) + '%';
+                
+                if (progress < 90) {
+                    animFrame = requestAnimationFrame(animateProgress);
+                }
+            }
+
+            animateProgress();
+
+            reader.onload = function(e) {
+                currentDataUrl = e.target.result;
+                
+                // Complete the ring (90% to 100%)
+                cancelAnimationFrame(animFrame);
+                
+                const fillTo100 = () => {
+                    fgCircle.style.strokeDashoffset = '0';
+                    fgCircle.classList.add('complete');
+                    document.getElementById('ringPercent').textContent = '100%';
+                };
+                fillTo100();
+
+                // Show done state
+                setTimeout(() => {
+                    document.getElementById('ringIcon').className = 'ring-icon done';
+                    document.getElementById('ringIcon').innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                    document.getElementById('ringText').className = 'ring-text done';
+                    document.getElementById('ringText').textContent = 'آماده!';
+                    document.getElementById('ringPercent').className = 'ring-percent done';
+                    document.getElementById('ringPercent').textContent = '✓';
+
+                    // Show result
+                    showResult();
+                }, 400);
+            };
+
+            reader.onerror = function() {
+                cancelAnimationFrame(animFrame);
+                document.getElementById('ringIcon').className = 'ring-icon';
+                document.getElementById('ringIcon').innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                document.getElementById('ringText').textContent = 'خطا!';
+                document.getElementById('ringPercent').textContent = 'دوباره تلاش کن';
+                document.getElementById('ringPercent').style.color = '#e74c3c';
+                setTimeout(resetAll, 2000);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function showResult() {
+            document.getElementById('previewImg').src = currentDataUrl;
+            
+            const preview = currentDataUrl.length > 70 ? 
+                currentDataUrl.substring(0, 70) + '...' : currentDataUrl;
+            document.getElementById('urlBox').textContent = preview;
+            document.getElementById('urlInfo').textContent = 
+                'Data URL | حجم: ' + (currentDataUrl.length/1024).toFixed(1) + 'KB';
+            
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            toast('✅ اسکین آماده شد!');
+        }
+
+        function copyUrl() {
+            if (!currentDataUrl) return;
+            navigator.clipboard.writeText(currentDataUrl).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('btn-copied');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> کپی شد!';
+                toast('✅ URL کپی شد');
+                setTimeout(() => {
+                    btn.classList.remove('btn-copied');
+                    btn.innerHTML = '<i class="fa-solid fa-copy"></i> کپی URL';
+                }, 2000);
+            });
+        }
+
+        function downloadSkin() {
+            if (!currentDataUrl) return;
+            const a = document.createElement('a');
+            a.href = currentDataUrl;
+            a.download = 'blockforge_skin.png';
+            a.click();
+            toast('✅ دانلود شد');
+        }
+
+        function resetAll() {
+            currentDataUrl = '';
+            document.getElementById('skinInput').value = '';
+            document.getElementById('resultSection').style.display = 'none';
+            
+            // Reset ring
+            const fg = document.getElementById('fgCircle');
+            fg.style.strokeDashoffset = CIRCUMFERENCE;
+            fg.classList.remove('complete');
+            
+            document.getElementById('uploadTrigger').style.pointerEvents = 'auto';
+            document.getElementById('ringIcon').className = 'ring-icon upload';
+            document.getElementById('ringIcon').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i>';
+            document.getElementById('ringText').className = 'ring-text idle';
+            document.getElementById('ringText').textContent = 'کلیک کن';
+            document.getElementById('ringPercent').className = 'ring-percent idle';
+            document.getElementById('ringPercent').textContent = 'آپلود اسکین';
+            document.getElementById('ringPercent').style.color = '';
+        }
+
+        function toast(msg, color='#2ecc71') {
+            const t = document.getElementById('toast');
+            t.innerHTML = msg;
+            t.style.display = 'block';
+            clearTimeout(t._t);
+            t._t = setTimeout(() => { t.style.display = 'none'; }, 2500);
+        }
+
+        // Drag & Drop
+        const ringWrap = document.getElementById('ringWrap');
+        ringWrap.addEventListener('dragover', e => e.preventDefault());
+        ringWrap.addEventListener('drop', e => {
+            e.preventDefault();
+            const f = e.dataTransfer.files[0];
+            if (f) startUpload(f);
+        });
+        document.body.addEventListener('dragover', e => e.preventDefault());
+        document.body.addEventListener('drop', e => e.preventDefault());
+    </script>
+</body>
+</html>

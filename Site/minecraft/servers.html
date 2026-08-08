@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>سرورهای بدراک | BlockForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #060608; --bg2: rgba(15,15,20,0.6); --glass: rgba(20,20,28,0.5);
+            --glass-border: rgba(255,255,255,0.06); --gold: #d4a54a;
+            --text: #e8e8e8; --text2: #a8a8a8; --text3: #707070;
+            --border: rgba(255,255,255,0.06); --radius: 16px; --radius-lg: 24px;
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --green: #2ecc71; --blue: #3498db; --purple: #a855f7; --orange: #e67e22;
+            --premium-gold: #f0c040; --red: #e74c3c; --cyan: #00bcd4;
+            --golden: #ffd700; --silver: #c0c0c0; --bronze: #cd7f32;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; font-size: 15px; }
+        body {
+            font-family: 'Vazirmatn', sans-serif; background: var(--bg);
+            background-image: 
+                radial-gradient(ellipse at 30% 10%, rgba(0,188,212,0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(0,188,212,0.02) 0%, transparent 60%);
+            color: var(--text); line-height: 1.7; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; padding-bottom: calc(30px + var(--safe-bottom));
+        }
+
+        .header {
+            background: rgba(8,8,12,0.85); backdrop-filter: blur(30px) saturate(160%);
+            -webkit-backdrop-filter: blur(30px) saturate(160%); border-bottom: 1px solid var(--glass-border);
+            position: sticky; top: 0; z-index: 100; padding: 6px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .back-btn {
+            width: 34px; height: 34px; border-radius: 50%; background: var(--glass);
+            border: 1px solid var(--glass-border); color: #bbb; cursor: pointer;
+            font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s; text-decoration: none;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .header-title {
+            font-weight: 800; font-size: 1rem; color: #fff;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .header-title i { color: var(--cyan); }
+        .header-actions { display: flex; gap: 6px; }
+        .h-btn {
+            width: 30px; height: 30px; border-radius: 50%; background: var(--glass);
+            border: 1px solid var(--glass-border); color: #bbb;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 0.7rem; transition: 0.2s;
+        }
+        .h-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+
+        /* ========== بخش Hero ========== */
+        .hero-section {
+            margin: 14px 16px; padding: 20px;
+            background: linear-gradient(135deg, rgba(0,188,212,0.08), rgba(0,150,170,0.04));
+            border: 1px solid rgba(0,188,212,0.2); border-radius: var(--radius-lg);
+            text-align: center; backdrop-filter: blur(10px);
+        }
+        .hero-icon { font-size: 2.5rem; color: var(--cyan); margin-bottom: 6px; }
+        .hero-title { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .hero-subtitle { font-size: 0.66rem; color: #888; }
+
+        /* ========== برترین‌ها - ۳ تایی ========== */
+        .top-section {
+            margin: 14px 16px;
+        }
+        .top-title {
+            font-size: 0.9rem; font-weight: 800; color: #fff;
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .top-title i { color: #ffd700; }
+        .top-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .top-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 14px 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+        .top-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .top-card.golden {
+            border-color: rgba(255,215,0,0.35);
+            background: linear-gradient(180deg, rgba(255,215,0,0.06) 0%, rgba(15,15,20,0.6) 100%);
+        }
+        .top-card.silver-card {
+            border-color: rgba(192,192,192,0.25);
+            background: linear-gradient(180deg, rgba(192,192,192,0.04) 0%, rgba(15,15,20,0.6) 100%);
+        }
+        .top-card.bronze-card {
+            border-color: rgba(205,127,50,0.25);
+            background: linear-gradient(180deg, rgba(205,127,50,0.04) 0%, rgba(15,15,20,0.6) 100%);
+        }
+        .top-rank {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 0.75rem;
+            margin: 0 auto 8px;
+        }
+        .top-rank.gold {
+            background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000;
+            box-shadow: 0 0 15px rgba(255,215,0,0.5); border: 2px solid #ffed4a;
+        }
+        .top-rank.silver {
+            background: linear-gradient(135deg, #e0e0e0, #a0a0a0); color: #000;
+            box-shadow: 0 0 12px rgba(192,192,192,0.4); border: 2px solid #f0f0f0;
+        }
+        .top-rank.bronze {
+            background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff;
+            box-shadow: 0 0 10px rgba(205,127,50,0.4); border: 2px solid #daa520;
+        }
+        .top-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background-size: cover; background-position: center;
+            margin: 0 auto 8px;
+            border: 2px solid rgba(255,255,255,0.08);
+        }
+        .top-name {
+            font-size: 0.74rem; font-weight: 800; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-bottom: 6px;
+        }
+        .top-ip-row {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            flex-wrap: wrap;
+        }
+        .top-ip, .top-port {
+            font-size: 0.54rem; color: var(--cyan);
+            background: rgba(0,188,212,0.06);
+            border: 1px solid rgba(0,188,212,0.12);
+            padding: 3px 8px; border-radius: 6px;
+            cursor: pointer; transition: 0.2s;
+            font-family: monospace;
+        }
+        .top-ip:hover, .top-port:hover { background: rgba(0,188,212,0.18); }
+        .top-separator { color: #555; font-size: 0.5rem; }
+        .top-vip-tag {
+            position: absolute; top: 8px; left: 8px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000; padding: 2px 7px; border-radius: 6px;
+            font-weight: 800; font-size: 0.45rem;
+        }
+
+        /* ========== لیست معمولی ========== */
+        .server-list {
+            display: flex; flex-direction: column; gap: 10px;
+            padding: 0 16px 20px;
+        }
+        .section-title {
+            font-size: 0.9rem; font-weight: 800; color: #fff;
+            margin: 10px 16px 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .section-title i { color: var(--cyan); }
+
+        .server-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius); padding: 14px;
+            transition: all 0.3s ease; backdrop-filter: blur(10px);
+            box-shadow: var(--card-shadow);
+            opacity: 0; animation: fadeUp 0.5s ease forwards;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .server-card:nth-child(1) { animation-delay: 0.03s; }
+        .server-card:nth-child(2) { animation-delay: 0.06s; }
+        .server-card:nth-child(3) { animation-delay: 0.09s; }
+        .server-card:nth-child(4) { animation-delay: 0.12s; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .server-card:hover {
+            border-color: rgba(0,188,212,0.4); transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .server-card-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            background-size: cover; background-position: center;
+            flex-shrink: 0; border: 2px solid rgba(255,255,255,0.08);
+        }
+        .server-card-info { flex: 1; min-width: 0; }
+        .server-card-name {
+            font-size: 0.8rem; font-weight: 700; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-bottom: 6px;
+        }
+        .server-card-ip-row {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .server-card-ip, .server-card-port {
+            font-size: 0.58rem; color: var(--cyan);
+            background: rgba(0,188,212,0.05);
+            border: 1px solid rgba(0,188,212,0.1);
+            padding: 3px 10px; border-radius: 6px;
+            cursor: pointer; transition: 0.2s;
+            font-family: monospace;
+        }
+        .server-card-ip:hover, .server-card-port:hover { background: rgba(0,188,212,0.15); }
+        .server-card-separator { color: #555; font-size: 0.6rem; }
+        .server-status-dot {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+        }
+        .server-status-dot.online {
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(46,204,113,0.5);
+        }
+        .server-status-dot.offline {
+            background: #e74c3c;
+            box-shadow: 0 0 8px rgba(231,76,60,0.4);
+        }
+
+        .no-results {
+            text-align: center; padding: 60px 20px; color: #555;
+        }
+        .no-results i { font-size: 4rem; color: #222; margin-bottom: 16px; display: block; }
+
+        /* ========== Toast ========== */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(24,24,32,0.95); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 16px;
+            padding: 12px 20px; z-index: 700; display: flex; align-items: center;
+            gap: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+            animation: toastIn 0.4s cubic-bezier(0.25,0.8,0.25,1.2);
+            font-size: 0.74rem; color: #fff; font-weight: 600;
+        }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(40px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(-50%) translateY(0); } to { opacity: 0; transform: translateX(-50%) translateY(30px); } }
+        .toast i { color: var(--cyan); }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-right"></i></a>
+        <div class="header-title"><i class="fa-solid fa-server"></i> سرورهای بدراک</div>
+        <div class="header-actions">
+            <button class="h-btn" onclick="window.location.href='index.html'" title="خانه"><i class="fa-solid fa-house"></i></button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <div class="hero-section">
+        <div class="hero-icon"><i class="fa-solid fa-globe"></i></div>
+        <div class="hero-title">به سرورهای بدراک بپیوندید!</div>
+        <div class="hero-subtitle">لیست بهترین سرورهای ماینکرفت بدراک ایران<br>برای کپی IP یا Port روی آن کلیک کنید</div>
+    </div>
+
+    <!-- برترین‌ها - ۳ تایی -->
+    <div class="top-section" id="topSection">
+        <div class="top-title"><i class="fa-solid fa-trophy"></i> برترین سرورها</div>
+        <div class="top-grid" id="topGrid"></div>
+    </div>
+
+    <!-- لیست بقیه سرورها -->
+    <div class="section-title"><i class="fa-solid fa-list"></i> سایر سرورها</div>
+    <div class="server-list" id="serverList"></div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" style="display:none;"></div>
+
+    <script src="servers.js"></script>
+    <script>
+        let servers = [];
+
+        function loadServers() {
+            if (typeof BEDROCK_SERVERS === 'undefined') {
+                servers = [];
+                return;
+            }
+            servers = BEDROCK_SERVERS;
+        }
+
+        function getRankInfo(index) {
+            if (index === 0) return { rankClass: 'gold', cardClass: 'golden', emoji: '🥇' };
+            if (index === 1) return { rankClass: 'silver', cardClass: 'silver-card', emoji: '🥈' };
+            if (index === 2) return { rankClass: 'bronze', cardClass: 'bronze-card', emoji: '🥉' };
+            return null;
+        }
+
+        function copyIP(ip) {
+            navigator.clipboard.writeText(ip).then(() => {
+                showToast(`<i class="fa-solid fa-check-circle"></i> کپی شد: ${ip}`);
+            }).catch(() => {
+                showToast(`<i class="fa-solid fa-triangle-exclamation"></i> خطا در کپی`);
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = msg;
+            toast.style.display = 'flex';
+            toast.style.animation = 'toastIn 0.4s cubic-bezier(0.25,0.8,0.25,1.2)';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.style.animation = 'toastOut 0.4s ease forwards';
+                setTimeout(() => { toast.style.display = 'none'; }, 400);
+            }, 2000);
+        }
+
+        function renderTopCard(server, index) {
+            const rank = getRankInfo(index);
+            return `
+            <div class="top-card ${rank ? rank.cardClass : ''}">
+                ${server.vip ? '<span class="top-vip-tag">VIP</span>' : ''}
+                ${rank ? `<div class="top-rank ${rank.rankClass}">${rank.emoji}</div>` : ''}
+                <div class="top-icon" style="background-image:url('${server.icon || 'https://picsum.photos/seed/top'+index+'/80/80'}');"></div>
+                <div class="top-name">${server.name}</div>
+                <div class="top-ip-row">
+                    <span class="top-ip" onclick="copyIP('${server.ip}')">${server.ip}</span>
+                    <span class="top-separator">:</span>
+                    <span class="top-port" onclick="copyIP('${server.port || 19132}')">${server.port || 19132}</span>
+                </div>
+            </div>`;
+        }
+
+        function renderServerCard(server, index) {
+            return `
+            <div class="server-card">
+                <span class="server-status-dot ${server.online ? 'online' : 'offline'}"></span>
+                <div class="server-card-icon" style="background-image:url('${server.icon || 'https://picsum.photos/seed/server'+index+'/80/80'}');"></div>
+                <div class="server-card-info">
+                    <div class="server-card-name">${server.name} ${server.vip ? '👑' : ''}</div>
+                    <div class="server-card-ip-row">
+                        <span class="server-card-ip" onclick="copyIP('${server.ip}')">${server.ip}</span>
+                        <span class="server-card-separator">:</span>
+                        <span class="server-card-port" onclick="copyIP('${server.port || 19132}')">${server.port || 19132}</span>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderAll() {
+            if (servers.length === 0) {
+                document.getElementById('topSection').style.display = 'none';
+                document.getElementById('serverList').innerHTML = `
+                <div class="no-results">
+                    <i class="fa-solid fa-server"></i>
+                    <p>هیچ سروری یافت نشد</p>
+                </div>`;
+                return;
+            }
+
+            // ۳ تای اول = برترین‌ها
+            const top3 = servers.slice(0, 3);
+            const rest = servers.slice(3);
+
+            // برترین‌ها
+            if (top3.length > 0) {
+                document.getElementById('topSection').style.display = 'block';
+                document.getElementById('topGrid').innerHTML = top3.map((s, i) => renderTopCard(s, i)).join('');
+            } else {
+                document.getElementById('topSection').style.display = 'none';
+            }
+
+            // بقیه
+            if (rest.length > 0) {
+                document.getElementById('serverList').innerHTML = rest.map((s, i) => renderServerCard(s, i + 3)).join('');
+            } else {
+                document.getElementById('serverList').innerHTML = `
+                <div class="no-results" style="padding:30px;">
+                    <p style="color:#666;">همین ۳ تا سرور برتر رو داریم 😎</p>
+                </div>`;
+            }
+        }
+
+        // Init
+        loadServers();
+        renderAll();
+    </script>
+</body>
+</html>
